@@ -24,7 +24,10 @@ export function toHexColor(color: string, fallback = "#32CD32"): string {
  * @param presets プリセットの色一覧
  * @returns {boolean} 一致すれば true
  */
-export function isPresetColor(color: string, presets: readonly string[]): boolean {
+export function isPresetColor(
+  color: string,
+  presets: readonly string[],
+): boolean {
   const hex = toHexColor(color, color);
   return presets.some((preset) => toHexColor(preset) === hex);
 }
@@ -93,7 +96,7 @@ export function rgbToHsl(rgb: Rgb): Hsl {
  */
 export function hslToRgb(hsl: Hsl): Rgb {
   const { h, s, l } = hsl;
-  const hn = ((h % 360) + 360) % 360 / 360;
+  const hn = (((h % 360) + 360) % 360) / 360;
   const sn = Math.max(0, Math.min(100, s)) / 100;
   const ln = Math.max(0, Math.min(100, l)) / 100;
   if (sn === 0) {

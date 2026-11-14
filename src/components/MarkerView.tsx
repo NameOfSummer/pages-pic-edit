@@ -1,7 +1,11 @@
 import { useEffect, useRef, type PointerEvent } from "react";
 import { SELECTION_CHROME_Z } from "@/components/BoxSelectionChrome";
 import { MARKER_CORNER_RADIUS } from "@/editor/markerGeometry";
-import { MARKER_OPACITY, type MarkerAnnotation, type MarkerPatch } from "@/editor/types";
+import {
+  MARKER_OPACITY,
+  type MarkerAnnotation,
+  type MarkerPatch,
+} from "@/editor/types";
 import { cn } from "@/lib/utils";
 
 /** マーカー表示コンポーネントのプロパティ。 */
@@ -27,7 +31,13 @@ type DragState = {
  * @param props マーカーデータと操作コールバック
  * @returns {JSX.Element} マーカー表示
  */
-export function MarkerView({ marker, selected = false, interactive, onSelect, onChange }: Props) {
+export function MarkerView({
+  marker,
+  selected = false,
+  interactive,
+  onSelect,
+  onChange,
+}: Props) {
   const dragRef = useRef<DragState | null>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -35,8 +45,14 @@ export function MarkerView({ marker, selected = false, interactive, onSelect, on
   const pad = marker.strokeWidth / 2 + 8;
   const minX = Math.min(marker.x1, marker.x2) - pad;
   const minY = Math.min(marker.y1, marker.y2) - pad;
-  const width = Math.max(marker.strokeWidth + 16, Math.abs(marker.x2 - marker.x1) + pad * 2);
-  const height = Math.max(marker.strokeWidth + 16, Math.abs(marker.y2 - marker.y1) + pad * 2);
+  const width = Math.max(
+    marker.strokeWidth + 16,
+    Math.abs(marker.x2 - marker.x1) + pad * 2,
+  );
+  const height = Math.max(
+    marker.strokeWidth + 16,
+    Math.abs(marker.y2 - marker.y1) + pad * 2,
+  );
 
   useEffect(() => {
     const onPointerMove = (event: globalThis.PointerEvent) => {
@@ -88,16 +104,30 @@ export function MarkerView({ marker, selected = false, interactive, onSelect, on
   };
 
   const length = Math.hypot(marker.x2 - marker.x1, marker.y2 - marker.y1);
-  const angle = (Math.atan2(marker.y2 - marker.y1, marker.x2 - marker.x1) * 180) / Math.PI;
+  const angle =
+    (Math.atan2(marker.y2 - marker.y1, marker.x2 - marker.x1) * 180) / Math.PI;
   const centerX = (marker.x1 + marker.x2) / 2 - minX;
   const centerY = (marker.y1 + marker.y2) / 2 - minY;
-  const corner = Math.min(MARKER_CORNER_RADIUS, marker.strokeWidth / 2, length / 2);
+  const corner = Math.min(
+    MARKER_CORNER_RADIUS,
+    marker.strokeWidth / 2,
+    length / 2,
+  );
 
   return (
     <div
       data-marker-id={marker.id}
-      className={cn("absolute", interactive ? "pointer-events-auto" : "pointer-events-none")}
-      style={{ left: minX, top: minY, width, height, zIndex: selected ? SELECTION_CHROME_Z - 1 : 3870 }}
+      className={cn(
+        "absolute",
+        interactive ? "pointer-events-auto" : "pointer-events-none",
+      )}
+      style={{
+        left: minX,
+        top: minY,
+        width,
+        height,
+        zIndex: selected ? SELECTION_CHROME_Z - 1 : 3870,
+      }}
     >
       <svg width={width} height={height} className="overflow-visible">
         <rect

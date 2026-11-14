@@ -98,7 +98,12 @@ export function LayerImage({
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
-      <img className="pointer-events-none block size-full" src={layer.src} alt={layer.name} draggable={false} />
+      <img
+        className="pointer-events-none block size-full"
+        src={layer.src}
+        alt={layer.name}
+        draggable={false}
+      />
 
       {cropping && crop && (
         <CropOverlay

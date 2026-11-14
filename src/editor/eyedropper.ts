@@ -1,5 +1,9 @@
 import { rgbToHex } from "@/lib/color";
-import { renderSceneToCanvas, type Bounds, type SceneDocument } from "@/editor/export";
+import {
+  renderSceneToCanvas,
+  type Bounds,
+  type SceneDocument,
+} from "@/editor/export";
 
 /** この値未満のアルファは透明として色を返さない。 */
 const MIN_ALPHA = 16;

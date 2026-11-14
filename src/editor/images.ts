@@ -20,7 +20,10 @@ export function isImageFile(file: File): boolean {
   if (IMAGE_TYPES.has(file.type)) {
     return true;
   }
-  return file.type.startsWith("image/") || /\.(png|jpe?g|webp|gif|bmp|svg)$/i.test(file.name);
+  return (
+    file.type.startsWith("image/") ||
+    /\.(png|jpe?g|webp|gif|bmp|svg)$/i.test(file.name)
+  );
 }
 
 /**
@@ -28,7 +31,9 @@ export function isImageFile(file: File): boolean {
  * @param files 入力。なければ空
  * @returns {File[]} 画像ファイル
  */
-export function collectImageFiles(files: FileList | File[] | DataTransferItemList | null): File[] {
+export function collectImageFiles(
+  files: FileList | File[] | DataTransferItemList | null,
+): File[] {
   if (!files) {
     return [];
   }
@@ -62,7 +67,9 @@ export function collectImageFiles(files: FileList | File[] | DataTransferItemLis
  * @param clipboardData paste イベントの DataTransfer
  * @returns {Promise<File[]>} 画像ファイル。読めなければ空
  */
-export async function collectClipboardImages(clipboardData: DataTransfer | null): Promise<File[]> {
+export async function collectClipboardImages(
+  clipboardData: DataTransfer | null,
+): Promise<File[]> {
   const fromEvent = collectClipboardImagesFromEvent(clipboardData);
   if (fromEvent.length > 0) {
     return fromEvent;
@@ -76,7 +83,9 @@ export async function collectClipboardImages(clipboardData: DataTransfer | null)
     const items = await navigator.clipboard.read();
     const files: File[] = [];
     for (const item of items) {
-      const type = item.types.find((candidate) => candidate.startsWith("image/"));
+      const type = item.types.find((candidate) =>
+        candidate.startsWith("image/"),
+      );
       if (!type) {
         continue;
       }
@@ -95,7 +104,9 @@ export async function collectClipboardImages(clipboardData: DataTransfer | null)
  * @param clipboardData paste イベントの DataTransfer
  * @returns {File[]} そのイベントに含まれていた画像
  */
-export function collectClipboardImagesFromEvent(clipboardData: DataTransfer | null): File[] {
+export function collectClipboardImagesFromEvent(
+  clipboardData: DataTransfer | null,
+): File[] {
   const fromItems = collectImageFiles(clipboardData?.items ?? null);
   if (fromItems.length > 0) {
     return fromItems;
@@ -165,7 +176,13 @@ async function canvasToObjectUrl(canvas: HTMLCanvasElement): Promise<string> {
 export async function cropImageSrc(
   layer: ImageLayer,
   crop: CropRect,
-): Promise<{ src: string; naturalWidth: number; naturalHeight: number; width: number; height: number }> {
+): Promise<{
+  src: string;
+  naturalWidth: number;
+  naturalHeight: number;
+  width: number;
+  height: number;
+}> {
   const image = await loadHtmlImage(layer.src);
   const scaleX = layer.naturalWidth / layer.width;
   const scaleY = layer.naturalHeight / layer.height;
@@ -183,7 +200,17 @@ export async function cropImageSrc(
     throw new Error("Canvas を初期化できませんでした");
   }
 
-  ctx.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, sourceWidth, sourceHeight);
+  ctx.drawImage(
+    image,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    0,
+    0,
+    sourceWidth,
+    sourceHeight,
+  );
 
   return {
     src: await canvasToObjectUrl(canvas),
@@ -201,7 +228,11 @@ export async function cropImageSrc(
  * @param viewport 画面サイズ。収める上限に使う
  * @returns {Promise<ImageLayer[]>} 新しいレイヤー
  */
-export async function filesToLayers(files: File[], origin: Point, viewport: Point): Promise<ImageLayer[]> {
+export async function filesToLayers(
+  files: File[],
+  origin: Point,
+  viewport: Point,
+): Promise<ImageLayer[]> {
   const maxWidth = Math.max(160, viewport.x * 0.72);
   const maxHeight = Math.max(160, viewport.y * 0.72);
   const layers: ImageLayer[] = [];
@@ -209,7 +240,12 @@ export async function filesToLayers(files: File[], origin: Point, viewport: Poin
   for (const [index, file] of files.entries()) {
     const src = URL.createObjectURL(file);
     const image = await loadHtmlImage(src);
-    const size = fitSize(image.naturalWidth, image.naturalHeight, maxWidth, maxHeight);
+    const size = fitSize(
+      image.naturalWidth,
+      image.naturalHeight,
+      maxWidth,
+      maxHeight,
+    );
     const offset = index * 28;
 
     layers.push({

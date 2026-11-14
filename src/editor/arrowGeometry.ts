@@ -5,7 +5,9 @@ import type { ArrowAnnotation, Point } from "./types";
  * @param arrow 始点と終点
  * @returns {number} 長さ（px）
  */
-export function arrowLength(arrow: Pick<ArrowAnnotation, "x1" | "y1" | "x2" | "y2">): number {
+export function arrowLength(
+  arrow: Pick<ArrowAnnotation, "x1" | "y1" | "x2" | "y2">,
+): number {
   return Math.hypot(arrow.x2 - arrow.x1, arrow.y2 - arrow.y1);
 }
 
@@ -46,12 +48,17 @@ export function arrowHeadHalfWidth(strokeWidth: number): number {
  * @param arrow 始点・終点・太さ
  * @returns {Point} 胴体の終点
  */
-export function arrowShaftEnd(arrow: Pick<ArrowAnnotation, "x1" | "y1" | "x2" | "y2" | "strokeWidth">): Point {
+export function arrowShaftEnd(
+  arrow: Pick<ArrowAnnotation, "x1" | "y1" | "x2" | "y2" | "strokeWidth">,
+): Point {
   const dx = arrow.x2 - arrow.x1;
   const dy = arrow.y2 - arrow.y1;
   const length = Math.max(1, Math.hypot(dx, dy));
   const shaftLength = Math.max(0, length - arrowHeadLength(arrow.strokeWidth));
-  return { x: arrow.x1 + (dx / length) * shaftLength, y: arrow.y1 + (dy / length) * shaftLength };
+  return {
+    x: arrow.x1 + (dx / length) * shaftLength,
+    y: arrow.y1 + (dy / length) * shaftLength,
+  };
 }
 
 /**
@@ -85,18 +92,30 @@ export function arrowHeadPoints(
  * @param tolerance 線からの許容距離（px）
  * @returns {boolean} 当たっていれば true
  */
-export function hitTestArrow(arrow: ArrowAnnotation, point: Point, tolerance = 8): boolean {
+export function hitTestArrow(
+  arrow: ArrowAnnotation,
+  point: Point,
+  tolerance = 8,
+): boolean {
   const { x1, y1, x2, y2 } = arrow;
   const dx = x2 - x1;
   const dy = y2 - y1;
   const lengthSq = dx * dx + dy * dy;
   if (lengthSq === 0) {
-    return Math.hypot(point.x - x1, point.y - y1) <= tolerance + arrow.strokeWidth;
+    return (
+      Math.hypot(point.x - x1, point.y - y1) <= tolerance + arrow.strokeWidth
+    );
   }
-  const t = Math.max(0, Math.min(1, ((point.x - x1) * dx + (point.y - y1) * dy) / lengthSq));
+  const t = Math.max(
+    0,
+    Math.min(1, ((point.x - x1) * dx + (point.y - y1) * dy) / lengthSq),
+  );
   const closestX = x1 + t * dx;
   const closestY = y1 + t * dy;
-  return Math.hypot(point.x - closestX, point.y - closestY) <= tolerance + arrow.strokeWidth / 2;
+  return (
+    Math.hypot(point.x - closestX, point.y - closestY) <=
+    tolerance + arrow.strokeWidth / 2
+  );
 }
 
 /**

@@ -21,7 +21,11 @@ type Props = {
   minWidth?: number;
   minHeight?: number;
   showRotate?: boolean;
-  onChange: (patch: { x: number; y: number; width: number; height: number } | { rotation: number }) => void;
+  onChange: (
+    patch:
+      | { x: number; y: number; width: number; height: number }
+      | { rotation: number },
+  ) => void;
 };
 
 /** リサイズまたは回転のドラッグ状態。 */
@@ -88,30 +92,33 @@ export function BoxSelectionChrome({
 }: Props) {
   const dragRef = useRef<DragState | null>(null);
 
-  const onResizePointerDown = (handle: ResizeHandle) => (event: PointerEvent<HTMLSpanElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-    dragRef.current = {
-      kind: "resize",
-      pointerId: event.pointerId,
-      handle,
-      startX: event.clientX,
-      startY: event.clientY,
-      originX: x,
-      originY: y,
-      originWidth: width,
-      originHeight: height,
-      rotation,
+  const onResizePointerDown =
+    (handle: ResizeHandle) => (event: PointerEvent<HTMLSpanElement>) => {
+      event.stopPropagation();
+      event.preventDefault();
+      dragRef.current = {
+        kind: "resize",
+        pointerId: event.pointerId,
+        handle,
+        startX: event.clientX,
+        startY: event.clientY,
+        originX: x,
+        originY: y,
+        originWidth: width,
+        originHeight: height,
+        rotation,
+      };
+      event.currentTarget.setPointerCapture(event.pointerId);
     };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  };
 
   const onRotatePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     event.preventDefault();
     const centerX = x + width / 2;
     const centerY = y + height / 2;
-    const pointerAngle = (Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180) / Math.PI;
+    const pointerAngle =
+      (Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180) /
+      Math.PI;
     dragRef.current = {
       kind: "rotate",
       pointerId: event.pointerId,
@@ -131,14 +138,27 @@ export function BoxSelectionChrome({
     event.preventDefault();
 
     if (drag.kind === "rotate") {
-      const pointerAngle = (Math.atan2(event.clientY - drag.centerY, event.clientX - drag.centerX) * 180) / Math.PI;
+      const pointerAngle =
+        (Math.atan2(
+          event.clientY - drag.centerY,
+          event.clientX - drag.centerX,
+        ) *
+          180) /
+        Math.PI;
       onChange({
-        rotation: snapRotation(drag.originRotation + (pointerAngle - drag.startAngle), event.shiftKey),
+        rotation: snapRotation(
+          drag.originRotation + (pointerAngle - drag.startAngle),
+          event.shiftKey,
+        ),
       });
       return;
     }
 
-    const local = screenDeltaToLocal(event.clientX - drag.startX, event.clientY - drag.startY, drag.rotation);
+    const local = screenDeltaToLocal(
+      event.clientX - drag.startX,
+      event.clientY - drag.startY,
+      drag.rotation,
+    );
     onChange(
       applyBoxResize({
         handle: drag.handle,

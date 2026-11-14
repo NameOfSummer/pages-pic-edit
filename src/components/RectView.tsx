@@ -27,7 +27,13 @@ type DragState = {
  * @param props 矩形データと操作コールバック
  * @returns {JSX.Element} 矩形表示
  */
-export function RectView({ rect, selected = false, interactive, onSelect, onChange }: Props) {
+export function RectView({
+  rect,
+  selected = false,
+  interactive,
+  onSelect,
+  onChange,
+}: Props) {
   const dragRef = useRef<DragState | null>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;

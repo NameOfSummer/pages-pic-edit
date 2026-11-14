@@ -1,8 +1,4 @@
-import {
-  MARKER_OPACITY,
-  type MarkerAnnotation,
-  type Point,
-} from "./types";
+import { MARKER_OPACITY, type MarkerAnnotation, type Point } from "./types";
 
 /** マーカー端の角丸（px）。 */
 export const MARKER_CORNER_RADIUS = 4;
@@ -20,7 +16,9 @@ export type Bounds = {
  * @param marker 始点と終点
  * @returns {number} 長さ（px）
  */
-export function markerLength(marker: Pick<MarkerAnnotation, "x1" | "y1" | "x2" | "y2">): number {
+export function markerLength(
+  marker: Pick<MarkerAnnotation, "x1" | "y1" | "x2" | "y2">,
+): number {
   return Math.hypot(marker.x2 - marker.x1, marker.y2 - marker.y1);
 }
 
@@ -102,8 +100,12 @@ export function straightenMarkerLine(
  * @param marker 端点
  * @returns {number} 角度（度）
  */
-export function markerAngleDegrees(marker: Pick<MarkerAnnotation, "x1" | "y1" | "x2" | "y2">): number {
-  return (Math.atan2(marker.y2 - marker.y1, marker.x2 - marker.x1) * 180) / Math.PI;
+export function markerAngleDegrees(
+  marker: Pick<MarkerAnnotation, "x1" | "y1" | "x2" | "y2">,
+): number {
+  return (
+    (Math.atan2(marker.y2 - marker.y1, marker.x2 - marker.x1) * 180) / Math.PI
+  );
 }
 
 /**
@@ -152,7 +154,11 @@ export function drawMarkerOnCanvas(
   const y2 = (marker.y2 - offsetY) * scale;
   const length = Math.max(1, Math.hypot(x2 - x1, y2 - y1));
   const thickness = Math.max(1, marker.strokeWidth * scale);
-  const radius = Math.min(MARKER_CORNER_RADIUS * scale, thickness / 2, length / 2);
+  const radius = Math.min(
+    MARKER_CORNER_RADIUS * scale,
+    thickness / 2,
+    length / 2,
+  );
 
   ctx.save();
   ctx.globalAlpha = MARKER_OPACITY;

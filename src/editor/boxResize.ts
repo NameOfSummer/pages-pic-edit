@@ -16,9 +16,15 @@ export const BOX_RESIZE_HANDLES: { id: ResizeHandle; className: string }[] = [
   { id: "sw", className: "-left-1.5 -bottom-1.5 cursor-nesw-resize" },
   { id: "se", className: "-right-1.5 -bottom-1.5 cursor-nwse-resize" },
   { id: "n", className: "left-1/2 -top-1.5 -translate-x-1/2 cursor-ns-resize" },
-  { id: "s", className: "left-1/2 -bottom-1.5 -translate-x-1/2 cursor-ns-resize" },
+  {
+    id: "s",
+    className: "left-1/2 -bottom-1.5 -translate-x-1/2 cursor-ns-resize",
+  },
   { id: "w", className: "-left-1.5 top-1/2 -translate-y-1/2 cursor-ew-resize" },
-  { id: "e", className: "-right-1.5 top-1/2 -translate-y-1/2 cursor-ew-resize" },
+  {
+    id: "e",
+    className: "-right-1.5 top-1/2 -translate-y-1/2 cursor-ew-resize",
+  },
 ];
 
 /**
@@ -28,7 +34,11 @@ export const BOX_RESIZE_HANDLES: { id: ResizeHandle; className: string }[] = [
  * @param rotationDeg 矩形の時計回り角度
  * @returns {{ x: number; y: number }} ローカル座標の移動量
  */
-export function screenDeltaToLocal(dx: number, dy: number, rotationDeg: number): { x: number; y: number } {
+export function screenDeltaToLocal(
+  dx: number,
+  dy: number,
+  rotationDeg: number,
+): { x: number; y: number } {
   const radians = (-rotationDeg * Math.PI) / 180;
   const cos = Math.cos(radians);
   const sin = Math.sin(radians);

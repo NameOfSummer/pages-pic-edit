@@ -1,8 +1,16 @@
 import { useRef, type PointerEvent } from "react";
 import { RotateCw } from "lucide-react";
 import { SELECTION_CHROME_Z } from "@/components/BoxSelectionChrome";
-import { BOX_RESIZE_HANDLES, screenDeltaToLocal, type ResizeHandle } from "@/editor/boxResize";
-import { markerAngleDegrees, markerLength, placeMarkerAtAngle } from "@/editor/markerGeometry";
+import {
+  BOX_RESIZE_HANDLES,
+  screenDeltaToLocal,
+  type ResizeHandle,
+} from "@/editor/boxResize";
+import {
+  markerAngleDegrees,
+  markerLength,
+  placeMarkerAtAngle,
+} from "@/editor/markerGeometry";
 import type { MarkerAnnotation, MarkerPatch } from "@/editor/types";
 import { cn } from "@/lib/utils";
 
@@ -91,28 +99,31 @@ export function MarkerSelectionChrome({ marker, onChange }: Props) {
   const boxWidth = length;
   const boxHeight = marker.strokeWidth;
 
-  const onResizePointerDown = (handle: ResizeHandle) => (event: PointerEvent<HTMLSpanElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-    dragRef.current = {
-      kind: "resize",
-      pointerId: event.pointerId,
-      handle,
-      startX: event.clientX,
-      startY: event.clientY,
-      centerX,
-      centerY,
-      length,
-      stroke: marker.strokeWidth,
-      angle,
+  const onResizePointerDown =
+    (handle: ResizeHandle) => (event: PointerEvent<HTMLSpanElement>) => {
+      event.stopPropagation();
+      event.preventDefault();
+      dragRef.current = {
+        kind: "resize",
+        pointerId: event.pointerId,
+        handle,
+        startX: event.clientX,
+        startY: event.clientY,
+        centerX,
+        centerY,
+        length,
+        stroke: marker.strokeWidth,
+        angle,
+      };
+      event.currentTarget.setPointerCapture(event.pointerId);
     };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  };
 
   const onRotatePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     event.preventDefault();
-    const pointerAngle = (Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180) / Math.PI;
+    const pointerAngle =
+      (Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180) /
+      Math.PI;
     dragRef.current = {
       kind: "rotate",
       pointerId: event.pointerId,
@@ -133,13 +144,25 @@ export function MarkerSelectionChrome({ marker, onChange }: Props) {
     event.preventDefault();
 
     if (drag.kind === "rotate") {
-      const pointerAngle = (Math.atan2(event.clientY - drag.centerY, event.clientX - drag.centerX) * 180) / Math.PI;
+      const pointerAngle =
+        (Math.atan2(
+          event.clientY - drag.centerY,
+          event.clientX - drag.centerX,
+        ) *
+          180) /
+        Math.PI;
       const next = drag.originAngle + (pointerAngle - drag.startAngle);
-      onChange(placeMarkerAtAngle(drag.origin, snapRotation(next, event.shiftKey)));
+      onChange(
+        placeMarkerAtAngle(drag.origin, snapRotation(next, event.shiftKey)),
+      );
       return;
     }
 
-    const local = screenDeltaToLocal(event.clientX - drag.startX, event.clientY - drag.startY, drag.angle);
+    const local = screenDeltaToLocal(
+      event.clientX - drag.startX,
+      event.clientY - drag.startY,
+      drag.angle,
+    );
     const handle = drag.handle;
     let lengthDelta = 0;
     let strokeDelta = 0;

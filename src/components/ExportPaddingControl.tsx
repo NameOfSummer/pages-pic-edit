@@ -1,7 +1,11 @@
 import { useRef, useState } from "react";
 import { Minus, Plus, SquareDashed } from "lucide-react";
 import { Popover } from "radix-ui";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   EXPORT_PADDING_MAX,
   EXPORT_PADDING_MIN,
@@ -65,7 +69,11 @@ export function ExportPaddingControl({ value, side, onChange }: Props) {
           collisionPadding={12}
           className="z-[11000] outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
         >
-          <div className="neu-panel flex items-center gap-1.5 px-3.5 py-3" role="group" aria-label="余白">
+          <div
+            className="neu-panel flex items-center gap-1.5 px-3.5 py-3"
+            role="group"
+            aria-label="余白"
+          >
             {EXPORT_PADDING_PRESETS.map((preset) => (
               <button
                 key={preset}

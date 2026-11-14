@@ -40,7 +40,10 @@ export function MosaicStyleControls({ style, onChange }: Props) {
                 <span
                   key={index}
                   className="block size-full rounded-[1px]"
-                  style={{ backgroundColor: "currentColor", opacity: 0.35 + index * 0.15 }}
+                  style={{
+                    backgroundColor: "currentColor",
+                    opacity: 0.35 + index * 0.15,
+                  }}
                 />
               ))}
             </span>

@@ -131,7 +131,9 @@ export function TextView({
       data-text-id={text.id}
       className={cn(
         "absolute touch-none",
-        interactive && !editing ? "pointer-events-auto cursor-move" : "pointer-events-auto",
+        interactive && !editing
+          ? "pointer-events-auto cursor-move"
+          : "pointer-events-auto",
       )}
       style={{
         left: text.x,
@@ -175,7 +177,10 @@ export function TextView({
           {text.text}
         </div>
       ) : (
-        <div className="h-full w-full overflow-hidden whitespace-pre-wrap break-words" style={textStyle}>
+        <div
+          className="h-full w-full overflow-hidden whitespace-pre-wrap break-words"
+          style={textStyle}
+        >
           {text.text}
         </div>
       )}

@@ -48,9 +48,15 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Noto Sans JP", "Helvetica Neue", arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-  --font-heading: Roboto, "Noto Sans JP", "Helvetica Neue", arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-  --font-mono: Roboto, "Noto Sans JP", "Helvetica Neue", arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  --font-sans:
+    "Noto Sans JP", "Helvetica Neue", arial, "Hiragino Kaku Gothic ProN",
+    "Hiragino Sans", Meiryo, sans-serif;
+  --font-heading:
+    Roboto, "Noto Sans JP", "Helvetica Neue", arial,
+    "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  --font-mono:
+    Roboto, "Noto Sans JP", "Helvetica Neue", arial,
+    "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -79,11 +85,17 @@
   --color-ink-foreground: var(--ink-foreground);
   --color-surface: var(--surface);
   /* ニューモーフィック影（DESIGN.md の Level 1 / Level 2 をツール UI 向けに縮小） */
-  --shadow-neu-panel: rgba(0, 0, 0, 0.21) 9px 8px 10px 0, #ffffff 0 0 5px 0, #ffffff -4px 0 5px 0, #ffffff -4px -6px 15px 0;
-  --shadow-neu-raised: #ffffff -2px -2px 4px 0, rgba(0, 0, 0, 0.16) 3px 3px 6px 0;
-  --shadow-neu-raised-hover: #ffffff -3px -3px 6px 0, rgba(0, 0, 0, 0.18) 5px 5px 10px 0;
-  --shadow-neu-inset: inset 3px 3px 6px rgba(0, 0, 0, 0.16), inset -3px -3px 6px #ffffff;
-  --shadow-neu-inset-sm: inset 2px 2px 4px rgba(0, 0, 0, 0.18), inset -2px -2px 4px #ffffff;
+  --shadow-neu-panel:
+    rgba(0, 0, 0, 0.21) 9px 8px 10px 0, #ffffff 0 0 5px 0, #ffffff -4px 0 5px 0,
+    #ffffff -4px -6px 15px 0;
+  --shadow-neu-raised:
+    #ffffff -2px -2px 4px 0, rgba(0, 0, 0, 0.16) 3px 3px 6px 0;
+  --shadow-neu-raised-hover:
+    #ffffff -3px -3px 6px 0, rgba(0, 0, 0, 0.18) 5px 5px 10px 0;
+  --shadow-neu-inset:
+    inset 3px 3px 6px rgba(0, 0, 0, 0.16), inset -3px -3px 6px #ffffff;
+  --shadow-neu-inset-sm:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.18), inset -2px -2px 4px #ffffff;
 }
 
 :root {
@@ -221,7 +233,7 @@
 
 /* 色見本（丸）。選択中（aria-pressed / data-active）は背景色の隙間 + 黒リングで示す */
 @utility neu-swatch {
-  border-radius: calc(infinity * 1px);
+  border-radius: calc(infinity* 1px);
   box-shadow: var(--shadow-neu-raised);
   transition-property: box-shadow, transform;
   transition-duration: 100ms;
@@ -232,7 +244,9 @@
 
   &[aria-pressed="true"],
   &[data-active="true"] {
-    box-shadow: 0 0 0 3px var(--background), 0 0 0 5px var(--foreground);
+    box-shadow:
+      0 0 0 3px var(--background),
+      0 0 0 5px var(--foreground);
     transform: scale(1.05);
   }
 }

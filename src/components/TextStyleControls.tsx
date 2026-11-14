@@ -34,11 +34,19 @@ export function TextStyleControls({ style, onChange }: Props) {
   const backgroundTransparent = isTransparentBackground(style.backgroundColor);
   const customTextColor = !isPresetColor(style.color, ANNOTATION_COLORS);
   const customBackground =
-    !backgroundTransparent && !isPresetColor(style.backgroundColor, BACKGROUND_PRESETS);
+    !backgroundTransparent &&
+    !isPresetColor(style.backgroundColor, BACKGROUND_PRESETS);
 
   return (
-    <div className="flex items-center gap-3 landscape:flex-col" onPointerDown={(event) => event.stopPropagation()}>
-      <div className="flex items-center gap-1.5 landscape:flex-col" role="group" aria-label="文字色">
+    <div
+      className="flex items-center gap-3 landscape:flex-col"
+      onPointerDown={(event) => event.stopPropagation()}
+    >
+      <div
+        className="flex items-center gap-1.5 landscape:flex-col"
+        role="group"
+        aria-label="文字色"
+      >
         <StyleFieldLabel>文字</StyleFieldLabel>
         {ANNOTATION_COLORS.map((color) => {
           const selected = style.color.toLowerCase() === color.toLowerCase();
@@ -51,7 +59,8 @@ export function TextStyleControls({ style, onChange }: Props) {
               aria-pressed={selected}
               className={cn(
                 "neu-swatch size-[22px]",
-                (color.toLowerCase() === "#ffffff" || color.toLowerCase() === "#fff100") &&
+                (color.toLowerCase() === "#ffffff" ||
+                  color.toLowerCase() === "#fff100") &&
                   "outline -outline-offset-1 outline-black/15",
               )}
               style={{ backgroundColor: color }}
@@ -69,7 +78,11 @@ export function TextStyleControls({ style, onChange }: Props) {
 
       <div className="neu-divider h-6 w-px landscape:h-px landscape:w-6" />
 
-      <div className="flex items-center gap-1.5 landscape:flex-col" role="group" aria-label="背景色">
+      <div
+        className="flex items-center gap-1.5 landscape:flex-col"
+        role="group"
+        aria-label="背景色"
+      >
         <StyleFieldLabel>背景</StyleFieldLabel>
         <button
           type="button"
@@ -84,7 +97,8 @@ export function TextStyleControls({ style, onChange }: Props) {
         </button>
         {BACKGROUND_COLORS.map(({ color, label }) => {
           const selected =
-            !backgroundTransparent && style.backgroundColor.toLowerCase() === color.toLowerCase();
+            !backgroundTransparent &&
+            style.backgroundColor.toLowerCase() === color.toLowerCase();
           return (
             <button
               key={color}
@@ -94,7 +108,8 @@ export function TextStyleControls({ style, onChange }: Props) {
               aria-pressed={selected}
               className={cn(
                 "neu-swatch size-[22px]",
-                color.toLowerCase() === "#ffffff" && "outline -outline-offset-1 outline-black/15",
+                color.toLowerCase() === "#ffffff" &&
+                  "outline -outline-offset-1 outline-black/15",
               )}
               style={{ backgroundColor: color }}
               onClick={() => onChange({ backgroundColor: color })}
@@ -111,7 +126,11 @@ export function TextStyleControls({ style, onChange }: Props) {
 
       <div className="neu-divider h-6 w-px landscape:h-px landscape:w-6" />
 
-      <div className="flex items-center gap-1.5 landscape:flex-col" role="group" aria-label="フォントサイズ">
+      <div
+        className="flex items-center gap-1.5 landscape:flex-col"
+        role="group"
+        aria-label="フォントサイズ"
+      >
         <StyleFieldLabel>サイズ</StyleFieldLabel>
         {TEXT_FONT_SIZES.map((size) => {
           const selected = style.fontSize === size;
@@ -132,7 +151,11 @@ export function TextStyleControls({ style, onChange }: Props) {
 
       <div className="neu-divider h-6 w-px landscape:h-px landscape:w-6" />
 
-      <div className="flex items-center gap-1.5 landscape:flex-col" role="group" aria-label="文字の太さ">
+      <div
+        className="flex items-center gap-1.5 landscape:flex-col"
+        role="group"
+        aria-label="文字の太さ"
+      >
         <StyleFieldLabel>太さ</StyleFieldLabel>
         <button
           type="button"

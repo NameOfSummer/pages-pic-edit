@@ -35,7 +35,9 @@ export type Bounds = {
  * @param mosaic モザイク
  * @returns {Array<{ x: number; y: number }>} 四隅
  */
-function rotatedCorners(mosaic: MosaicAnnotation): Array<{ x: number; y: number }> {
+function rotatedCorners(
+  mosaic: MosaicAnnotation,
+): Array<{ x: number; y: number }> {
   const cx = mosaic.x + mosaic.width / 2;
   const cy = mosaic.y + mosaic.height / 2;
   const radians = (mosaic.rotation * Math.PI) / 180;
@@ -76,7 +78,10 @@ export function getMosaicBounds(mosaic: MosaicAnnotation): Bounds {
  * @param blockSize ブロックの一辺（px）
  * @returns {void}
  */
-export function pixelateCanvas(canvas: HTMLCanvasElement, blockSize: number): void {
+export function pixelateCanvas(
+  canvas: HTMLCanvasElement,
+  blockSize: number,
+): void {
   const width = canvas.width;
   const height = canvas.height;
   if (width < 1 || height < 1) {
@@ -186,7 +191,13 @@ export async function renderMosaicPreview(
       ctx.save();
       ctx.translate(layerCx, layerCy);
       ctx.rotate((layer.rotation * Math.PI) / 180);
-      ctx.drawImage(image, -layer.width / 2, -layer.height / 2, layer.width, layer.height);
+      ctx.drawImage(
+        image,
+        -layer.width / 2,
+        -layer.height / 2,
+        layer.width,
+        layer.height,
+      );
       ctx.restore();
     } catch {
       // 読み込み失敗時はスキップ

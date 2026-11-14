@@ -207,7 +207,11 @@ export function getExportScale(layers: ImageLayer[]): number {
   let scale = 1;
   for (const layer of layers) {
     if (layer.width > 0 && layer.height > 0) {
-      scale = Math.max(scale, layer.naturalWidth / layer.width, layer.naturalHeight / layer.height);
+      scale = Math.max(
+        scale,
+        layer.naturalWidth / layer.width,
+        layer.naturalHeight / layer.height,
+      );
     }
   }
   return scale;
@@ -288,7 +292,10 @@ export async function renderSceneToCanvas(
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
 
-  if ((scene.texts.length > 0 || scene.counters.length > 0) && "fonts" in document) {
+  if (
+    (scene.texts.length > 0 || scene.counters.length > 0) &&
+    "fonts" in document
+  ) {
     await document.fonts.ready;
   }
 
@@ -302,7 +309,13 @@ export async function renderSceneToCanvas(
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate((layer.rotation * Math.PI) / 180);
-    ctx.drawImage(image, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+    ctx.drawImage(
+      image,
+      -drawWidth / 2,
+      -drawHeight / 2,
+      drawWidth,
+      drawHeight,
+    );
     ctx.restore();
   }
 
@@ -404,13 +417,18 @@ function keptExportStem(name: string): string | null {
     return null;
   }
   const stem = base.replace(/\.[^.]+$/, "").trim();
-  if (!stem || stem === "." || stem === ".." || PLACEHOLDER_EXPORT_STEMS.has(stem.toLowerCase())) {
+  if (
+    !stem ||
+    stem === "." ||
+    stem === ".." ||
+    PLACEHOLDER_EXPORT_STEMS.has(stem.toLowerCase())
+  ) {
     return null;
   }
   const safe = [...stem]
     .filter((char) => {
       const code = char.codePointAt(0) ?? 0;
-      return code > 31 && !"<>:\"|?*".includes(char);
+      return code > 31 && !'<>:"|?*'.includes(char);
     })
     .join("")
     .trim();
@@ -428,7 +446,10 @@ function keptExportStem(name: string): string | null {
  * @param date 日時名に使う日時
  * @returns {string} ファイル名
  */
-export function formatExportFilenameForLayers(layers: ImageLayer[], date = new Date()): string {
+export function formatExportFilenameForLayers(
+  layers: ImageLayer[],
+  date = new Date(),
+): string {
   if (layers.length !== 1) {
     return formatExportFilename(date);
   }
@@ -463,7 +484,16 @@ export async function downloadLayersAsPng(
   settings: Partial<ExportSettings> = {},
   filename?: string,
 ): Promise<void> {
-  const blob = await renderLayersToPngBlob(layers, arrows, rects, texts, counters, mosaics, markers, settings);
+  const blob = await renderLayersToPngBlob(
+    layers,
+    arrows,
+    rects,
+    texts,
+    counters,
+    mosaics,
+    markers,
+    settings,
+  );
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
@@ -494,7 +524,16 @@ export async function copyLayersAsPng(
   markers: MarkerAnnotation[] = [],
   settings: Partial<ExportSettings> = {},
 ): Promise<void> {
-  const blob = await renderLayersToPngBlob(layers, arrows, rects, texts, counters, mosaics, markers, settings);
+  const blob = await renderLayersToPngBlob(
+    layers,
+    arrows,
+    rects,
+    texts,
+    counters,
+    mosaics,
+    markers,
+    settings,
+  );
   if (!navigator.clipboard?.write) {
     throw new Error("このブラウザでは画像のコピーに対応していません");
   }

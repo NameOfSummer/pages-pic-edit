@@ -22,7 +22,12 @@ import { ExportPaddingControl } from "@/components/ExportPaddingControl";
 import { MarkerStyleControls } from "@/components/MarkerStyleControls";
 import { MosaicStyleControls } from "@/components/MosaicStyleControls";
 import { TextStyleControls } from "@/components/TextStyleControls";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type {
   AnnotationStyle,
   CounterStyle,
@@ -134,7 +139,8 @@ function useLandscape(): boolean {
 const stylePanelClass = "neu-panel px-3 py-2.5";
 
 /** ツールバーの区切り線クラス。 */
-const dividerClass = "neu-divider mx-1 h-6 w-px landscape:mx-0 landscape:my-1 landscape:h-px landscape:w-6";
+const dividerClass =
+  "neu-divider mx-1 h-6 w-px landscape:mx-0 landscape:my-1 landscape:h-px landscape:w-6";
 
 /**
  * エディタ上部のツールバー。ツール切替・スタイル・履歴・書き出しをまとめる。
@@ -185,141 +191,177 @@ export function Toolbar({
         className="fixed z-[10001] overscroll-contain portrait:bottom-2 portrait:left-1/2 portrait:w-[calc(100vw-1rem)] portrait:max-w-max portrait:-translate-x-1/2 portrait:overflow-x-auto portrait:overflow-y-hidden landscape:top-1/2 landscape:right-2 landscape:h-[calc(100vh-1rem)] landscape:max-h-max landscape:-translate-y-1/2 landscape:overflow-x-hidden landscape:overflow-y-auto"
         onPointerDown={(event) => event.stopPropagation()}
       >
-      <div className="flex w-max flex-col items-center gap-3.5 p-4 landscape:flex-row landscape:items-start">
-        {showStrokeStyle && !cropping && (
-          <div className={stylePanelClass}>
-            <AnnotationStyleControls
-              style={annotationStyle}
-              onChange={onAnnotationStyleChange}
-              label={annotationStyleLabel}
-            />
-          </div>
-        )}
-
-        {showTextStyle && !cropping && (
-          <div className={stylePanelClass}>
-            <TextStyleControls style={textStyle} onChange={onTextStyleChange} />
-          </div>
-        )}
-
-        {showCounterStyle && !cropping && (
-          <div className={stylePanelClass}>
-            <CounterStyleControls style={counterStyle} onChange={onCounterStyleChange} />
-          </div>
-        )}
-
-        {showMosaicStyle && !cropping && (
-          <div className={stylePanelClass}>
-            <MosaicStyleControls style={mosaicStyle} onChange={onMosaicStyleChange} />
-          </div>
-        )}
-
-        {showMarkerStyle && !cropping && (
-          <div className={stylePanelClass}>
-            <MarkerStyleControls style={markerStyle} onChange={onMarkerStyleChange} />
-          </div>
-        )}
-
-        <div className="neu-panel flex w-max shrink-0 items-center gap-1.5 p-2.5 text-foreground landscape:flex-col-reverse">
-          {cropping ? (
-            <>
-            <ToolbarButton label="トリミング適用" onClick={onApplyCrop}>
-              <Check />
-            </ToolbarButton>
-            <ToolbarButton label="キャンセル" onClick={onCancelCrop}>
-              <X />
-            </ToolbarButton>
-            </>
-          ) : (
-            <>
-              <ToolbarButton label="画像を追加" onClick={onAdd}>
-                <ImagePlus />
-              </ToolbarButton>
-              <div className={dividerClass} />
-              <ToolbarButton
-                pressed={tool === "arrow"}
-                label="矢印"
-                onClick={() => onToolChange(tool === "arrow" ? "select" : "arrow")}
-              >
-                <MoveUpRight />
-              </ToolbarButton>
-              <ToolbarButton
-                pressed={tool === "rect"}
-                label="枠"
-                onClick={() => onToolChange(tool === "rect" ? "select" : "rect")}
-              >
-                <Square />
-              </ToolbarButton>
-              <ToolbarButton
-                pressed={tool === "text"}
-                label="テキスト"
-                onClick={() => onToolChange(tool === "text" ? "select" : "text")}
-              >
-                <Type />
-              </ToolbarButton>
-              <ToolbarButton
-                pressed={tool === "counter"}
-                label="カウンター"
-                onClick={() => onToolChange(tool === "counter" ? "select" : "counter")}
-              >
-                <ListOrdered />
-              </ToolbarButton>
-              <ToolbarButton
-                pressed={tool === "mosaic"}
-                label="モザイク"
-                onClick={() => onToolChange(tool === "mosaic" ? "select" : "mosaic")}
-              >
-                <Grid2x2 />
-              </ToolbarButton>
-              <ToolbarButton
-                pressed={tool === "marker"}
-                label="マーカー"
-                onClick={() => onToolChange(tool === "marker" ? "select" : "marker")}
-              >
-                <Highlighter />
-              </ToolbarButton>
-              <div className={dividerClass} />
-              <BackgroundColorControl
-                value={exportSettings.backgroundColor}
-                side={popoverSide}
-                onChange={(backgroundColor) => onExportSettingsChange({ backgroundColor })}
+        <div className="flex w-max flex-col items-center gap-3.5 p-4 landscape:flex-row landscape:items-start">
+          {showStrokeStyle && !cropping && (
+            <div className={stylePanelClass}>
+              <AnnotationStyleControls
+                style={annotationStyle}
+                onChange={onAnnotationStyleChange}
+                label={annotationStyleLabel}
               />
-              <ExportPaddingControl
-                value={exportSettings.padding}
-                side={popoverSide}
-                onChange={(padding) => onExportSettingsChange({ padding })}
-              />
-              <div className={dividerClass} />
-              <ToolbarButton label="元に戻す" disabled={!canUndo} onClick={onUndo}>
-                <Undo2 />
-              </ToolbarButton>
-              <ToolbarButton label="やり直す" disabled={!canRedo} onClick={onRedo}>
-                <Redo2 />
-              </ToolbarButton>
-              <ToolbarButton label="リセット" disabled={!canReset} onClick={onReset}>
-                <RotateCcw />
-              </ToolbarButton>
-              <div className={dividerClass} />
-              <ToolbarButton
-               
-                label="ダウンロード"
-                disabled={!canExport || exporting}
-                onClick={onDownload}
-              >
-                <Download />
-              </ToolbarButton>
-              <ToolbarButton
-               
-                label="コピー"
-                disabled={!canExport || exporting}
-                onClick={onCopy}
-              >
-                <Copy />
-              </ToolbarButton>
-            </>
+            </div>
           )}
+
+          {showTextStyle && !cropping && (
+            <div className={stylePanelClass}>
+              <TextStyleControls
+                style={textStyle}
+                onChange={onTextStyleChange}
+              />
+            </div>
+          )}
+
+          {showCounterStyle && !cropping && (
+            <div className={stylePanelClass}>
+              <CounterStyleControls
+                style={counterStyle}
+                onChange={onCounterStyleChange}
+              />
+            </div>
+          )}
+
+          {showMosaicStyle && !cropping && (
+            <div className={stylePanelClass}>
+              <MosaicStyleControls
+                style={mosaicStyle}
+                onChange={onMosaicStyleChange}
+              />
+            </div>
+          )}
+
+          {showMarkerStyle && !cropping && (
+            <div className={stylePanelClass}>
+              <MarkerStyleControls
+                style={markerStyle}
+                onChange={onMarkerStyleChange}
+              />
+            </div>
+          )}
+
+          <div className="neu-panel flex w-max shrink-0 items-center gap-1.5 p-2.5 text-foreground landscape:flex-col-reverse">
+            {cropping ? (
+              <>
+                <ToolbarButton label="トリミング適用" onClick={onApplyCrop}>
+                  <Check />
+                </ToolbarButton>
+                <ToolbarButton label="キャンセル" onClick={onCancelCrop}>
+                  <X />
+                </ToolbarButton>
+              </>
+            ) : (
+              <>
+                <ToolbarButton label="画像を追加" onClick={onAdd}>
+                  <ImagePlus />
+                </ToolbarButton>
+                <div className={dividerClass} />
+                <ToolbarButton
+                  pressed={tool === "arrow"}
+                  label="矢印"
+                  onClick={() =>
+                    onToolChange(tool === "arrow" ? "select" : "arrow")
+                  }
+                >
+                  <MoveUpRight />
+                </ToolbarButton>
+                <ToolbarButton
+                  pressed={tool === "rect"}
+                  label="枠"
+                  onClick={() =>
+                    onToolChange(tool === "rect" ? "select" : "rect")
+                  }
+                >
+                  <Square />
+                </ToolbarButton>
+                <ToolbarButton
+                  pressed={tool === "text"}
+                  label="テキスト"
+                  onClick={() =>
+                    onToolChange(tool === "text" ? "select" : "text")
+                  }
+                >
+                  <Type />
+                </ToolbarButton>
+                <ToolbarButton
+                  pressed={tool === "counter"}
+                  label="カウンター"
+                  onClick={() =>
+                    onToolChange(tool === "counter" ? "select" : "counter")
+                  }
+                >
+                  <ListOrdered />
+                </ToolbarButton>
+                <ToolbarButton
+                  pressed={tool === "mosaic"}
+                  label="モザイク"
+                  onClick={() =>
+                    onToolChange(tool === "mosaic" ? "select" : "mosaic")
+                  }
+                >
+                  <Grid2x2 />
+                </ToolbarButton>
+                <ToolbarButton
+                  pressed={tool === "marker"}
+                  label="マーカー"
+                  onClick={() =>
+                    onToolChange(tool === "marker" ? "select" : "marker")
+                  }
+                >
+                  <Highlighter />
+                </ToolbarButton>
+                <div className={dividerClass} />
+                <BackgroundColorControl
+                  value={exportSettings.backgroundColor}
+                  side={popoverSide}
+                  onChange={(backgroundColor) =>
+                    onExportSettingsChange({ backgroundColor })
+                  }
+                />
+                <ExportPaddingControl
+                  value={exportSettings.padding}
+                  side={popoverSide}
+                  onChange={(padding) => onExportSettingsChange({ padding })}
+                />
+                <div className={dividerClass} />
+                <ToolbarButton
+                  label="元に戻す"
+                  disabled={!canUndo}
+                  onClick={onUndo}
+                >
+                  <Undo2 />
+                </ToolbarButton>
+                <ToolbarButton
+                  label="やり直す"
+                  disabled={!canRedo}
+                  onClick={onRedo}
+                >
+                  <Redo2 />
+                </ToolbarButton>
+                <ToolbarButton
+                  label="リセット"
+                  disabled={!canReset}
+                  onClick={onReset}
+                >
+                  <RotateCcw />
+                </ToolbarButton>
+                <div className={dividerClass} />
+                <ToolbarButton
+                  label="ダウンロード"
+                  disabled={!canExport || exporting}
+                  onClick={onDownload}
+                >
+                  <Download />
+                </ToolbarButton>
+                <ToolbarButton
+                  label="コピー"
+                  disabled={!canExport || exporting}
+                  onClick={onCopy}
+                >
+                  <Copy />
+                </ToolbarButton>
+              </>
+            )}
+          </div>
         </div>
-      </div>
       </div>
     </TooltipProvider>
   );
