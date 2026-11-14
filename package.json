@@ -1,15 +1,17 @@
 {
-  "name": "pic-edit",
+  "name": "pages-pic-edit",
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": ">=26"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "rebuild:esbuild": "npm rebuild esbuild --ignore-scripts=false"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@fontsource/noto-sans-jp": "^5.3.1",
@@ -43,7 +45,6 @@
     "vite": "^8.3.5"
   },
   "allowScripts": {
-    "esbuild": true,
     "fsevents": false
   },
   "overrides": {
