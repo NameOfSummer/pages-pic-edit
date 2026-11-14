@@ -19,7 +19,9 @@ function TooltipProvider({
  * @param props Radix Tooltip.Root のプロパティ
  * @returns {JSX.Element} ルート要素
  */
-function Tooltip({ ...props }: React.ComponentProps<typeof TooltipPrimitive.Root>) {
+function Tooltip({
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Root>) {
   return <TooltipPrimitive.Root data-slot="tooltip" {...props} />;
 }
 
@@ -28,7 +30,9 @@ function Tooltip({ ...props }: React.ComponentProps<typeof TooltipPrimitive.Root
  * @param props Radix Tooltip.Trigger のプロパティ
  * @returns {JSX.Element} トリガー要素
  */
-function TooltipTrigger({ ...props }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
+function TooltipTrigger({
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
 

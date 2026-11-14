@@ -1,4 +1,9 @@
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import { Pipette } from "lucide-react";
 import {
   buildChromaticGrid,
@@ -78,7 +83,10 @@ export function ColorPickerPanel({ value, onChange, onEyedropper }: Props) {
       </div>
 
       {/* 色面は凹んだ枠に収める（高さは枠込みで固定） */}
-      <div className="rounded-[14px] p-1.5 shadow-neu-inset" style={{ height: PANEL_BODY_HEIGHT }}>
+      <div
+        className="rounded-[14px] p-1.5 shadow-neu-inset"
+        style={{ height: PANEL_BODY_HEIGHT }}
+      >
         {tab === "grid" ? (
           <GridView value={hex} onChange={onChange} />
         ) : (
@@ -118,10 +126,16 @@ function GridView({ value, onChange }: Props) {
   const current = value.toLowerCase();
 
   return (
-    <div className="flex h-full flex-col gap-1" role="listbox" aria-label="色グリッド">
+    <div
+      className="flex h-full flex-col gap-1"
+      role="listbox"
+      aria-label="色グリッド"
+    >
       <div
         className="grid h-7 shrink-0 overflow-hidden rounded-[8px]"
-        style={{ gridTemplateColumns: `repeat(${COLOR_GRID_COLS}, minmax(0, 1fr))` }}
+        style={{
+          gridTemplateColumns: `repeat(${COLOR_GRID_COLS}, minmax(0, 1fr))`,
+        }}
       >
         {GRAYSCALE.map((color) => (
           <Swatch
@@ -177,7 +191,8 @@ function Swatch({
       aria-label={color}
       className={cn(
         "h-full w-full outline-none transition-transform",
-        selected && "relative z-10 scale-110 ring-2 ring-white ring-offset-1 ring-offset-black/40",
+        selected &&
+          "relative z-10 scale-110 ring-2 ring-white ring-offset-1 ring-offset-black/40",
       )}
       style={{ backgroundColor: color }}
       onClick={() => onSelect(color)}
@@ -201,7 +216,8 @@ function SpectrumView({ value, onChange }: Props) {
     const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     const y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
     const l = 94 - y * 78;
-    const s = y < 0.15 ? (y / 0.15) * 70 : 70 + Math.min(1, (y - 0.15) / 0.85) * 30;
+    const s =
+      y < 0.15 ? (y / 0.15) * 70 : 70 + Math.min(1, (y - 0.15) / 0.85) * 30;
     onChange(hslToHex({ h: x * 360, s, l }));
   };
 
@@ -247,7 +263,11 @@ function SpectrumView({ value, onChange }: Props) {
       <span
         aria-hidden
         className="pointer-events-none absolute size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.35)]"
-        style={{ left: `${markerX}%`, top: `${markerY}%`, backgroundColor: value }}
+        style={{
+          left: `${markerX}%`,
+          top: `${markerY}%`,
+          backgroundColor: value,
+        }}
       />
     </div>
   );
@@ -258,7 +278,13 @@ function SpectrumView({ value, onChange }: Props) {
  * @param props 現在の HEX と確定時コールバック
  * @returns {JSX.Element} HEX 入力
  */
-function HexField({ value, onChange }: { value: string; onChange: (color: string) => void }) {
+function HexField({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (color: string) => void;
+}) {
   const [draft, setDraft] = useState(value.toUpperCase());
 
   useEffect(() => {
@@ -276,7 +302,10 @@ function HexField({ value, onChange }: { value: string; onChange: (color: string
         const next = event.target.value;
         setDraft(next);
         const trimmed = next.trim();
-        if (/^#[0-9a-fA-F]{6}$/.test(trimmed) || /^#[0-9a-fA-F]{3}$/.test(trimmed)) {
+        if (
+          /^#[0-9a-fA-F]{6}$/.test(trimmed) ||
+          /^#[0-9a-fA-F]{3}$/.test(trimmed)
+        ) {
           onChange(toHexColor(trimmed));
         }
       }}

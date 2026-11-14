@@ -24,7 +24,11 @@ type Props = {
  * @param props 現在のスタイルと変更コールバック
  * @returns {JSX.Element} スタイル操作 UI
  */
-export function AnnotationStyleControls({ style, onChange, label = "注釈" }: Props) {
+export function AnnotationStyleControls({
+  style,
+  onChange,
+  label = "注釈",
+}: Props) {
   const customColor = !isPresetColor(style.color, ANNOTATION_COLORS);
   const canThinner = style.strokeWidth > ANNOTATION_STROKE_MIN;
   const canThicker = style.strokeWidth < ANNOTATION_STROKE_MAX;
@@ -36,12 +40,24 @@ export function AnnotationStyleControls({ style, onChange, label = "注釈" }: P
    */
   function stepStrokeWidth(direction: 1 | -1): void {
     const next = style.strokeWidth + direction * ANNOTATION_STROKE_STEP;
-    onChange({ strokeWidth: Math.min(ANNOTATION_STROKE_MAX, Math.max(ANNOTATION_STROKE_MIN, next)) });
+    onChange({
+      strokeWidth: Math.min(
+        ANNOTATION_STROKE_MAX,
+        Math.max(ANNOTATION_STROKE_MIN, next),
+      ),
+    });
   }
 
   return (
-    <div className="flex items-center gap-3 landscape:flex-col" onPointerDown={(event) => event.stopPropagation()}>
-      <div className="flex items-center gap-1.5 landscape:flex-col" role="group" aria-label={`${label}の色`}>
+    <div
+      className="flex items-center gap-3 landscape:flex-col"
+      onPointerDown={(event) => event.stopPropagation()}
+    >
+      <div
+        className="flex items-center gap-1.5 landscape:flex-col"
+        role="group"
+        aria-label={`${label}の色`}
+      >
         <StyleFieldLabel>{label}</StyleFieldLabel>
         {ANNOTATION_COLORS.map((color) => {
           const selected = style.color.toLowerCase() === color.toLowerCase();
@@ -54,7 +70,8 @@ export function AnnotationStyleControls({ style, onChange, label = "注釈" }: P
               aria-pressed={selected}
               className={cn(
                 "neu-swatch size-[22px]",
-                (color.toLowerCase() === "#ffffff" || color.toLowerCase() === "#fff100") &&
+                (color.toLowerCase() === "#ffffff" ||
+                  color.toLowerCase() === "#fff100") &&
                   "outline -outline-offset-1 outline-black/15",
               )}
               style={{ backgroundColor: color }}
@@ -72,7 +89,11 @@ export function AnnotationStyleControls({ style, onChange, label = "注釈" }: P
 
       <div className="neu-divider h-6 w-px landscape:h-px landscape:w-6" />
 
-      <div className="flex items-center gap-1.5 landscape:flex-col" role="group" aria-label={`${label}の太さ`}>
+      <div
+        className="flex items-center gap-1.5 landscape:flex-col"
+        role="group"
+        aria-label={`${label}の太さ`}
+      >
         <StyleFieldLabel>太さ</StyleFieldLabel>
         {ANNOTATION_STROKE_WIDTHS.map((width) => {
           const selected = style.strokeWidth === width;

@@ -19,12 +19,13 @@ type DragState = { kind: "start" | "end"; pointerId: number };
 export function ArrowSelectionChrome({ arrow, onChange }: Props) {
   const dragRef = useRef<DragState | null>(null);
 
-  const onHandlePointerDown = (kind: "start" | "end") => (event: PointerEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-    dragRef.current = { kind, pointerId: event.pointerId };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  };
+  const onHandlePointerDown =
+    (kind: "start" | "end") => (event: PointerEvent<HTMLButtonElement>) => {
+      event.stopPropagation();
+      event.preventDefault();
+      dragRef.current = { kind, pointerId: event.pointerId };
+      event.currentTarget.setPointerCapture(event.pointerId);
+    };
 
   const onPointerMove = (event: PointerEvent<HTMLButtonElement>) => {
     const drag = dragRef.current;
@@ -33,7 +34,10 @@ export function ArrowSelectionChrome({ arrow, onChange }: Props) {
     }
     event.preventDefault();
     if (drag.kind === "start") {
-      onChange({ x1: Math.round(event.clientX), y1: Math.round(event.clientY) });
+      onChange({
+        x1: Math.round(event.clientX),
+        y1: Math.round(event.clientY),
+      });
       return;
     }
     onChange({ x2: Math.round(event.clientX), y2: Math.round(event.clientY) });
@@ -49,7 +53,10 @@ export function ArrowSelectionChrome({ arrow, onChange }: Props) {
     "pointer-events-auto absolute size-3.5 -translate-x-1/2 -translate-y-1/2 cursor-grab rounded-full border-2 border-[var(--brand)] bg-white shadow-md active:cursor-grabbing";
 
   return (
-    <div className="pointer-events-none absolute inset-0" style={{ zIndex: SELECTION_CHROME_Z }}>
+    <div
+      className="pointer-events-none absolute inset-0"
+      style={{ zIndex: SELECTION_CHROME_Z }}
+    >
       <button
         type="button"
         aria-label="始点"

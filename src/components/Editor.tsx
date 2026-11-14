@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useRef, useState, type ChangeEvent, type DragEvent, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type DragEvent,
+  type PointerEvent,
+} from "react";
 import {
   ArrowDown,
   ArrowDownToLine,
@@ -24,7 +32,10 @@ import { SelectionChrome } from "@/components/SelectionChrome";
 import { TextView } from "@/components/TextView";
 import { Toolbar } from "@/components/Toolbar";
 import { EyedropperContext } from "@/editor/EyedropperContext";
-import { createSceneColorSampler, type SceneColorSampler } from "@/editor/eyedropper";
+import {
+  createSceneColorSampler,
+  type SceneColorSampler,
+} from "@/editor/eyedropper";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -34,18 +45,33 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
-import { collectClipboardImages, collectClipboardImagesFromEvent, collectImageFiles } from "@/editor/images";
+import {
+  collectClipboardImages,
+  collectClipboardImagesFromEvent,
+  collectImageFiles,
+} from "@/editor/images";
 import {
   ANNOTATION_PASTE_OFFSET,
   omitAnnotationId,
   shiftAnnotationClipboard,
   type AnnotationClipboard,
 } from "@/editor/annotationClipboard";
-import { copyLayersAsPng, downloadLayersAsPng, getExportBounds } from "@/editor/export";
+import {
+  copyLayersAsPng,
+  downloadLayersAsPng,
+  getExportBounds,
+} from "@/editor/export";
 import { createHistoryController, type EditorSnapshot } from "@/editor/history";
-import { loadEditorPreferences, saveEditorPreferences } from "@/editor/preferences";
+import {
+  loadEditorPreferences,
+  saveEditorPreferences,
+} from "@/editor/preferences";
 import { normalizeRectFromDrag } from "@/editor/rectGeometry";
-import { getTextBoxSize, MIN_TEXT_BOX_HEIGHT, MIN_TEXT_BOX_WIDTH } from "@/editor/textGeometry";
+import {
+  getTextBoxSize,
+  MIN_TEXT_BOX_HEIGHT,
+  MIN_TEXT_BOX_WIDTH,
+} from "@/editor/textGeometry";
 import { useArrows } from "@/editor/useArrows";
 import { useCounters } from "@/editor/useCounters";
 import { useLayers } from "@/editor/useLayers";
@@ -71,7 +97,15 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 /** 右クリックメニューの対象（キャンバス・レイヤー・各注釈）。 */
-type ContextTarget = "canvas" | "layer" | "arrow" | "rect" | "text" | "counter" | "mosaic" | "marker";
+type ContextTarget =
+  | "canvas"
+  | "layer"
+  | "arrow"
+  | "rect"
+  | "text"
+  | "counter"
+  | "mosaic"
+  | "marker";
 /** ドラッグ描画中の始点・終点を表す下書き線。 */
 type DraftLine = { x1: number; y1: number; x2: number; y2: number };
 
@@ -83,7 +117,9 @@ export function Editor() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragDepthRef = useRef(0);
   const contextPointRef = useRef<Point>({ x: 0, y: 0 });
-  const draftRef = useRef<{ pointerId: number; x1: number; y1: number } | null>(null);
+  const draftRef = useRef<{ pointerId: number; x1: number; y1: number } | null>(
+    null,
+  );
   const annotationClipboardRef = useRef<AnnotationClipboard | null>(null);
   const layerClipboardRef = useRef<Omit<ImageLayer, "id"> | null>(null);
   const historyRef = useRef(createHistoryController());
@@ -98,17 +134,29 @@ export function Editor() {
   const [exporting, setExporting] = useState(false);
   // 前回使ったスタイルと書き出し設定を、初回描画時に一度だけ読み込む
   const [initialPreferences] = useState(loadEditorPreferences);
-  const [exportSettings, setExportSettings] = useState<ExportSettings>(initialPreferences.export);
+  const [exportSettings, setExportSettings] = useState<ExportSettings>(
+    initialPreferences.export,
+  );
   const [tool, setTool] = useState<EditorTool>("select");
   const [draftArrow, setDraftArrow] = useState<DraftLine | null>(null);
   const [draftRect, setDraftRect] = useState<DraftLine | null>(null);
   const [draftMosaic, setDraftMosaic] = useState<DraftLine | null>(null);
   const [draftMarker, setDraftMarker] = useState<DraftLine | null>(null);
-  const [annotationStyle, setAnnotationStyle] = useState<AnnotationStyle>(initialPreferences.annotation);
-  const [textStyle, setTextStyle] = useState<TextStyle>(initialPreferences.text);
-  const [counterStyle, setCounterStyle] = useState<CounterStyle>(initialPreferences.counter);
-  const [mosaicStyle, setMosaicStyle] = useState<MosaicStyle>(initialPreferences.mosaic);
-  const [markerStyle, setMarkerStyle] = useState<MarkerStyle>(initialPreferences.marker);
+  const [annotationStyle, setAnnotationStyle] = useState<AnnotationStyle>(
+    initialPreferences.annotation,
+  );
+  const [textStyle, setTextStyle] = useState<TextStyle>(
+    initialPreferences.text,
+  );
+  const [counterStyle, setCounterStyle] = useState<CounterStyle>(
+    initialPreferences.counter,
+  );
+  const [mosaicStyle, setMosaicStyle] = useState<MosaicStyle>(
+    initialPreferences.mosaic,
+  );
+  const [markerStyle, setMarkerStyle] = useState<MarkerStyle>(
+    initialPreferences.marker,
+  );
   const [editingTextId, setEditingTextId] = useState<string | null>(null);
   const [eyedropperSession, setEyedropperSession] = useState<{
     sampler: SceneColorSampler;
@@ -213,24 +261,41 @@ export function Editor() {
     clearAll: clearAllMarkers,
   } = useMarkers();
 
-  const docRef = useRef({ layers, arrows, rects, texts, counters, mosaics, markers });
+  const docRef = useRef({
+    layers,
+    arrows,
+    rects,
+    texts,
+    counters,
+    mosaics,
+    markers,
+  });
   docRef.current = { layers, arrows, rects, texts, counters, mosaics, markers };
 
   const selectedLayer = layers.find((layer) => layer.id === selectedId) ?? null;
-  const selectedArrow = arrows.find((arrow) => arrow.id === selectedArrowId) ?? null;
+  const selectedArrow =
+    arrows.find((arrow) => arrow.id === selectedArrowId) ?? null;
   const selectedRect = rects.find((rect) => rect.id === selectedRectId) ?? null;
   const selectedText = texts.find((text) => text.id === selectedTextId) ?? null;
-  const selectedCounter = counters.find((counter) => counter.id === selectedCounterId) ?? null;
-  const selectedMosaic = mosaics.find((mosaic) => mosaic.id === selectedMosaicId) ?? null;
-  const selectedMarker = markers.find((marker) => marker.id === selectedMarkerId) ?? null;
-  const selectedIndex = selectedId ? layers.findIndex((layer) => layer.id === selectedId) : -1;
+  const selectedCounter =
+    counters.find((counter) => counter.id === selectedCounterId) ?? null;
+  const selectedMosaic =
+    mosaics.find((mosaic) => mosaic.id === selectedMosaicId) ?? null;
+  const selectedMarker =
+    markers.find((marker) => marker.id === selectedMarkerId) ?? null;
+  const selectedIndex = selectedId
+    ? layers.findIndex((layer) => layer.id === selectedId)
+    : -1;
   const showLayerOrder = contextTarget === "layer" && Boolean(selectedId);
   const showArrowMenu = contextTarget === "arrow" && Boolean(selectedArrowId);
   const showRectMenu = contextTarget === "rect" && Boolean(selectedRectId);
   const showTextMenu = contextTarget === "text" && Boolean(selectedTextId);
-  const showCounterMenu = contextTarget === "counter" && Boolean(selectedCounterId);
-  const showMosaicMenu = contextTarget === "mosaic" && Boolean(selectedMosaicId);
-  const showMarkerMenu = contextTarget === "marker" && Boolean(selectedMarkerId);
+  const showCounterMenu =
+    contextTarget === "counter" && Boolean(selectedCounterId);
+  const showMosaicMenu =
+    contextTarget === "mosaic" && Boolean(selectedMosaicId);
+  const showMarkerMenu =
+    contextTarget === "marker" && Boolean(selectedMarkerId);
   const showAnnotationMenu =
     showArrowMenu ||
     showRectMenu ||
@@ -239,7 +304,10 @@ export function Editor() {
     showMosaicMenu ||
     showMarkerMenu;
   const showStrokeStyle =
-    tool === "arrow" || tool === "rect" || Boolean(selectedArrow) || Boolean(selectedRect);
+    tool === "arrow" ||
+    tool === "rect" ||
+    Boolean(selectedArrow) ||
+    Boolean(selectedRect);
   const showTextStyle = tool === "text" || Boolean(selectedText);
   const showCounterStyle = tool === "counter" || Boolean(selectedCounter);
   const showMosaicStyle = tool === "mosaic" || Boolean(selectedMosaic);
@@ -252,7 +320,8 @@ export function Editor() {
   const activeTextStyle: TextStyle = selectedText
     ? {
         color: selectedText.color,
-        backgroundColor: selectedText.backgroundColor ?? DEFAULT_TEXT_BACKGROUND,
+        backgroundColor:
+          selectedText.backgroundColor ?? DEFAULT_TEXT_BACKGROUND,
         fontSize: selectedText.fontSize,
         fontWeight: selectedText.fontWeight,
       }
@@ -267,8 +336,13 @@ export function Editor() {
     ? { color: selectedMarker.color, strokeWidth: selectedMarker.strokeWidth }
     : markerStyle;
   const annotationStyleLabel =
-    tool === "rect" || selectedRect ? "枠" : tool === "arrow" || selectedArrow ? "矢印" : "注釈";
-  const canBringForward = selectedIndex >= 0 && selectedIndex < layers.length - 1;
+    tool === "rect" || selectedRect
+      ? "枠"
+      : tool === "arrow" || selectedArrow
+        ? "矢印"
+        : "注釈";
+  const canBringForward =
+    selectedIndex >= 0 && selectedIndex < layers.length - 1;
   const canSendBackward = selectedIndex > 0;
   const canBringToFront = canBringForward;
   const canSendToBack = canSendBackward;
@@ -283,7 +357,11 @@ export function Editor() {
   const canReset = canExport;
   const canUndo = historyTick >= 0 && historyRef.current.canUndo();
   const canRedo = historyTick >= 0 && historyRef.current.canRedo();
-  const isDrawingTool = tool === "arrow" || tool === "rect" || tool === "mosaic" || tool === "marker";
+  const isDrawingTool =
+    tool === "arrow" ||
+    tool === "rect" ||
+    tool === "mosaic" ||
+    tool === "marker";
   const isTextTool = tool === "text";
   const isCounterTool = tool === "counter";
 
@@ -444,7 +522,10 @@ export function Editor() {
       clearMosaicSelection();
       clearMarkerSelection();
       setEditingTextId(null);
-      await addFiles(files, origin ?? { x: window.innerWidth / 2, y: window.innerHeight / 2 });
+      await addFiles(
+        files,
+        origin ?? { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+      );
     },
     [
       addFiles,
@@ -469,7 +550,11 @@ export function Editor() {
     }
     try {
       const items = await navigator.clipboard.read();
-      setCanPasteImage(items.some((item) => item.types.some((type) => type.startsWith("image/"))));
+      setCanPasteImage(
+        items.some((item) =>
+          item.types.some((type) => type.startsWith("image/")),
+        ),
+      );
     } catch {
       setCanPasteImage(true);
     }
@@ -537,31 +622,33 @@ export function Editor() {
     setEyedropperSession(null);
   }, []);
 
-  const startEyedropper = useCallback(
-    (onPick: (color: string) => void) => {
-      if (eyedropperBusyRef.current) {
-        return;
-      }
-      eyedropperBusyRef.current = true;
-      void (async () => {
-        try {
-          const doc = docRef.current;
-          const sampler = await createSceneColorSampler(doc);
-          if (!sampler) {
-            toast.error("色を取得できる画像や注釈がありません", { position: "top-right" });
-            return;
-          }
-          setEyedropperSession({ sampler, onPick, preview: null });
-        } catch (error) {
-          const message = error instanceof Error ? error.message : "スポイトの準備に失敗しました";
-          toast.error(message, { position: "top-right" });
-        } finally {
-          eyedropperBusyRef.current = false;
+  const startEyedropper = useCallback((onPick: (color: string) => void) => {
+    if (eyedropperBusyRef.current) {
+      return;
+    }
+    eyedropperBusyRef.current = true;
+    void (async () => {
+      try {
+        const doc = docRef.current;
+        const sampler = await createSceneColorSampler(doc);
+        if (!sampler) {
+          toast.error("色を取得できる画像や注釈がありません", {
+            position: "top-right",
+          });
+          return;
         }
-      })();
-    },
-    [],
-  );
+        setEyedropperSession({ sampler, onPick, preview: null });
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : "スポイトの準備に失敗しました";
+        toast.error(message, { position: "top-right" });
+      } finally {
+        eyedropperBusyRef.current = false;
+      }
+    })();
+  }, []);
 
   const runExport = useCallback(
     async (action: "download" | "copy") => {
@@ -571,22 +658,52 @@ export function Editor() {
       setExporting(true);
       try {
         if (action === "download") {
-          await downloadLayersAsPng(layers, arrows, rects, texts, counters, mosaics, markers, exportSettings);
+          await downloadLayersAsPng(
+            layers,
+            arrows,
+            rects,
+            texts,
+            counters,
+            mosaics,
+            markers,
+            exportSettings,
+          );
         } else {
-          await copyLayersAsPng(layers, arrows, rects, texts, counters, mosaics, markers, exportSettings);
+          await copyLayersAsPng(
+            layers,
+            arrows,
+            rects,
+            texts,
+            counters,
+            mosaics,
+            markers,
+            exportSettings,
+          );
           toast.success("クリップボードにコピーしました", {
             duration: 1000,
             position: "top-right",
           });
         }
       } catch (error) {
-        const message = error instanceof Error ? error.message : "書き出しに失敗しました";
+        const message =
+          error instanceof Error ? error.message : "書き出しに失敗しました";
         toast.error(message, { position: "top-right" });
       } finally {
         setExporting(false);
       }
     },
-    [arrows, canExport, counters, exporting, exportSettings, layers, markers, mosaics, rects, texts],
+    [
+      arrows,
+      canExport,
+      counters,
+      exporting,
+      exportSettings,
+      layers,
+      markers,
+      mosaics,
+      rects,
+      texts,
+    ],
   );
 
   const onAnnotationStyleChange = useCallback(
@@ -707,32 +824,50 @@ export function Editor() {
 
   const copySelectedAnnotation = useCallback((): boolean => {
     if (selectedArrow) {
-      annotationClipboardRef.current = { kind: "arrow", data: omitAnnotationId(selectedArrow) };
+      annotationClipboardRef.current = {
+        kind: "arrow",
+        data: omitAnnotationId(selectedArrow),
+      };
       clearLayerClipboard();
       return true;
     }
     if (selectedRect) {
-      annotationClipboardRef.current = { kind: "rect", data: omitAnnotationId(selectedRect) };
+      annotationClipboardRef.current = {
+        kind: "rect",
+        data: omitAnnotationId(selectedRect),
+      };
       clearLayerClipboard();
       return true;
     }
     if (selectedText) {
-      annotationClipboardRef.current = { kind: "text", data: omitAnnotationId(selectedText) };
+      annotationClipboardRef.current = {
+        kind: "text",
+        data: omitAnnotationId(selectedText),
+      };
       clearLayerClipboard();
       return true;
     }
     if (selectedCounter) {
-      annotationClipboardRef.current = { kind: "counter", data: omitAnnotationId(selectedCounter) };
+      annotationClipboardRef.current = {
+        kind: "counter",
+        data: omitAnnotationId(selectedCounter),
+      };
       clearLayerClipboard();
       return true;
     }
     if (selectedMosaic) {
-      annotationClipboardRef.current = { kind: "mosaic", data: omitAnnotationId(selectedMosaic) };
+      annotationClipboardRef.current = {
+        kind: "mosaic",
+        data: omitAnnotationId(selectedMosaic),
+      };
       clearLayerClipboard();
       return true;
     }
     if (selectedMarker) {
-      annotationClipboardRef.current = { kind: "marker", data: omitAnnotationId(selectedMarker) };
+      annotationClipboardRef.current = {
+        kind: "marker",
+        data: omitAnnotationId(selectedMarker),
+      };
       clearLayerClipboard();
       return true;
     }
@@ -806,7 +941,9 @@ export function Editor() {
     if (!selectedLayer) {
       return false;
     }
-    const blob = await fetch(selectedLayer.src).then((response) => response.blob());
+    const blob = await fetch(selectedLayer.src).then((response) =>
+      response.blob(),
+    );
     const src = URL.createObjectURL(blob);
     if (layerClipboardRef.current) {
       URL.revokeObjectURL(layerClipboardRef.current.src);
@@ -907,8 +1044,17 @@ export function Editor() {
     event.preventDefault();
     event.stopPropagation();
     clearAllSelections();
-    draftRef.current = { pointerId: event.pointerId, x1: event.clientX, y1: event.clientY };
-    const draft = { x1: event.clientX, y1: event.clientY, x2: event.clientX, y2: event.clientY };
+    draftRef.current = {
+      pointerId: event.pointerId,
+      x1: event.clientX,
+      y1: event.clientY,
+    };
+    const draft = {
+      x1: event.clientX,
+      y1: event.clientY,
+      x2: event.clientX,
+      y2: event.clientY,
+    };
     if (tool === "arrow") {
       setDraftArrow(draft);
     } else if (tool === "rect") {
@@ -926,7 +1072,12 @@ export function Editor() {
     if (!draft || draft.pointerId !== event.pointerId) {
       return;
     }
-    const next = { x1: draft.x1, y1: draft.y1, x2: event.clientX, y2: event.clientY };
+    const next = {
+      x1: draft.x1,
+      y1: draft.y1,
+      x2: event.clientX,
+      y2: event.clientY,
+    };
     if (tool === "arrow") {
       setDraftArrow(next);
     } else if (tool === "rect") {
@@ -985,7 +1136,14 @@ export function Editor() {
       marker: markerStyle,
       export: exportSettings,
     });
-  }, [annotationStyle, textStyle, counterStyle, mosaicStyle, markerStyle, exportSettings]);
+  }, [
+    annotationStyle,
+    textStyle,
+    counterStyle,
+    mosaicStyle,
+    markerStyle,
+    exportSettings,
+  ]);
 
   useEffect(() => {
     const endGesture = () => {
@@ -1193,10 +1351,20 @@ export function Editor() {
   ]);
 
   const draftRectBox = draftRect
-    ? normalizeRectFromDrag(draftRect.x1, draftRect.y1, draftRect.x2, draftRect.y2)
+    ? normalizeRectFromDrag(
+        draftRect.x1,
+        draftRect.y1,
+        draftRect.x2,
+        draftRect.y2,
+      )
     : null;
   const draftMosaicBox = draftMosaic
-    ? normalizeRectFromDrag(draftMosaic.x1, draftMosaic.y1, draftMosaic.x2, draftMosaic.y2)
+    ? normalizeRectFromDrag(
+        draftMosaic.x1,
+        draftMosaic.y1,
+        draftMosaic.x2,
+        draftMosaic.y2,
+      )
     : null;
   const exportBounds = getExportBounds(
     layers,
@@ -1211,768 +1379,795 @@ export function Editor() {
 
   return (
     <EyedropperContext.Provider value={{ startEyedropper }}>
-    <ContextMenu
-      onOpenChange={(open) => {
-        if (open) {
-          void refreshCanPaste();
-        }
-      }}
-    >
-      <ContextMenuTrigger asChild>
-        <main
-          className={cn(
-            "relative h-full w-full select-none",
-            isDrawingTool && "cursor-crosshair",
-            isTextTool && "cursor-text",
-            isCounterTool && "cursor-crosshair",
-            !isDrawingTool && !isTextTool && !isCounterTool && "cursor-default",
-            isDragOver && "is-dragover",
-          )}
-          onDragEnter={onDragEnter}
-          onDragOver={onDragOver}
-          onDragLeave={onDragLeave}
-          onDrop={onDrop}
-          onPointerDown={() => {
-            if (!cropping && tool === "select") {
-              clearAllSelections();
-            }
-          }}
-          onContextMenu={(event) => {
-            contextPointRef.current = { x: event.clientX, y: event.clientY };
-            const arrowElement = (event.target as HTMLElement | null)?.closest?.("[data-arrow-id]");
-            const arrowId = arrowElement?.getAttribute("data-arrow-id");
-            if (arrowId) {
-              setContextTarget("arrow");
-              setSelectedArrowId(arrowId);
-              clearLayerSelection();
-              clearRectSelection();
-              clearTextSelection();
-              clearCounterSelection();
-              clearMosaicSelection();
-              clearMarkerSelection();
-              setEditingTextId(null);
-              return;
-            }
-            const rectElement = (event.target as HTMLElement | null)?.closest?.("[data-rect-id]");
-            const rectId = rectElement?.getAttribute("data-rect-id");
-            if (rectId) {
-              setContextTarget("rect");
-              setSelectedRectId(rectId);
-              clearLayerSelection();
-              clearArrowSelection();
-              clearTextSelection();
-              clearCounterSelection();
-              clearMosaicSelection();
-              clearMarkerSelection();
-              setEditingTextId(null);
-              return;
-            }
-            const textElement = (event.target as HTMLElement | null)?.closest?.("[data-text-id]");
-            const textId = textElement?.getAttribute("data-text-id");
-            if (textId) {
-              setContextTarget("text");
-              setSelectedTextId(textId);
-              clearLayerSelection();
-              clearArrowSelection();
-              clearRectSelection();
-              clearCounterSelection();
-              clearMosaicSelection();
-              clearMarkerSelection();
-              return;
-            }
-            const counterElement = (event.target as HTMLElement | null)?.closest?.("[data-counter-id]");
-            const counterId = counterElement?.getAttribute("data-counter-id");
-            if (counterId) {
-              setContextTarget("counter");
-              setSelectedCounterId(counterId);
-              clearLayerSelection();
-              clearArrowSelection();
-              clearRectSelection();
-              clearTextSelection();
-              clearMosaicSelection();
-              clearMarkerSelection();
-              setEditingTextId(null);
-              return;
-            }
-            const mosaicElement = (event.target as HTMLElement | null)?.closest?.("[data-mosaic-id]");
-            const mosaicId = mosaicElement?.getAttribute("data-mosaic-id");
-            if (mosaicId) {
-              setContextTarget("mosaic");
-              setSelectedMosaicId(mosaicId);
-              clearLayerSelection();
-              clearArrowSelection();
-              clearRectSelection();
-              clearTextSelection();
-              clearCounterSelection();
-              clearMarkerSelection();
-              setEditingTextId(null);
-              return;
-            }
-            const markerElement = (event.target as HTMLElement | null)?.closest?.("[data-marker-id]");
-            const markerId = markerElement?.getAttribute("data-marker-id");
-            if (markerId) {
-              setContextTarget("marker");
-              setSelectedMarkerId(markerId);
-              clearLayerSelection();
-              clearArrowSelection();
-              clearRectSelection();
-              clearTextSelection();
-              clearCounterSelection();
-              clearMosaicSelection();
-              setEditingTextId(null);
-              return;
-            }
-            const layerElement = (event.target as HTMLElement | null)?.closest?.("[data-layer-id]");
-            const layerId = layerElement?.getAttribute("data-layer-id");
-            if (layerId) {
-              setContextTarget("layer");
-              clearArrowSelection();
-              clearRectSelection();
-              clearTextSelection();
-              clearCounterSelection();
-              clearMosaicSelection();
-              clearMarkerSelection();
-              setEditingTextId(null);
-              if (!cropping || layerId === selectedId) {
-                selectLayer(layerId);
+      <ContextMenu
+        onOpenChange={(open) => {
+          if (open) {
+            void refreshCanPaste();
+          }
+        }}
+      >
+        <ContextMenuTrigger asChild>
+          <main
+            className={cn(
+              "relative h-full w-full select-none",
+              isDrawingTool && "cursor-crosshair",
+              isTextTool && "cursor-text",
+              isCounterTool && "cursor-crosshair",
+              !isDrawingTool &&
+                !isTextTool &&
+                !isCounterTool &&
+                "cursor-default",
+              isDragOver && "is-dragover",
+            )}
+            onDragEnter={onDragEnter}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDrop={onDrop}
+            onPointerDown={() => {
+              if (!cropping && tool === "select") {
+                clearAllSelections();
               }
-              return;
-            }
-            setContextTarget("canvas");
-            if (!cropping) {
-              clearAllSelections();
-            }
-          }}
-        >
-          <div className="checkerboard absolute inset-0" aria-hidden="true" />
+            }}
+            onContextMenu={(event) => {
+              contextPointRef.current = { x: event.clientX, y: event.clientY };
+              const arrowElement = (
+                event.target as HTMLElement | null
+              )?.closest?.("[data-arrow-id]");
+              const arrowId = arrowElement?.getAttribute("data-arrow-id");
+              if (arrowId) {
+                setContextTarget("arrow");
+                setSelectedArrowId(arrowId);
+                clearLayerSelection();
+                clearRectSelection();
+                clearTextSelection();
+                clearCounterSelection();
+                clearMosaicSelection();
+                clearMarkerSelection();
+                setEditingTextId(null);
+                return;
+              }
+              const rectElement = (
+                event.target as HTMLElement | null
+              )?.closest?.("[data-rect-id]");
+              const rectId = rectElement?.getAttribute("data-rect-id");
+              if (rectId) {
+                setContextTarget("rect");
+                setSelectedRectId(rectId);
+                clearLayerSelection();
+                clearArrowSelection();
+                clearTextSelection();
+                clearCounterSelection();
+                clearMosaicSelection();
+                clearMarkerSelection();
+                setEditingTextId(null);
+                return;
+              }
+              const textElement = (
+                event.target as HTMLElement | null
+              )?.closest?.("[data-text-id]");
+              const textId = textElement?.getAttribute("data-text-id");
+              if (textId) {
+                setContextTarget("text");
+                setSelectedTextId(textId);
+                clearLayerSelection();
+                clearArrowSelection();
+                clearRectSelection();
+                clearCounterSelection();
+                clearMosaicSelection();
+                clearMarkerSelection();
+                return;
+              }
+              const counterElement = (
+                event.target as HTMLElement | null
+              )?.closest?.("[data-counter-id]");
+              const counterId = counterElement?.getAttribute("data-counter-id");
+              if (counterId) {
+                setContextTarget("counter");
+                setSelectedCounterId(counterId);
+                clearLayerSelection();
+                clearArrowSelection();
+                clearRectSelection();
+                clearTextSelection();
+                clearMosaicSelection();
+                clearMarkerSelection();
+                setEditingTextId(null);
+                return;
+              }
+              const mosaicElement = (
+                event.target as HTMLElement | null
+              )?.closest?.("[data-mosaic-id]");
+              const mosaicId = mosaicElement?.getAttribute("data-mosaic-id");
+              if (mosaicId) {
+                setContextTarget("mosaic");
+                setSelectedMosaicId(mosaicId);
+                clearLayerSelection();
+                clearArrowSelection();
+                clearRectSelection();
+                clearTextSelection();
+                clearCounterSelection();
+                clearMarkerSelection();
+                setEditingTextId(null);
+                return;
+              }
+              const markerElement = (
+                event.target as HTMLElement | null
+              )?.closest?.("[data-marker-id]");
+              const markerId = markerElement?.getAttribute("data-marker-id");
+              if (markerId) {
+                setContextTarget("marker");
+                setSelectedMarkerId(markerId);
+                clearLayerSelection();
+                clearArrowSelection();
+                clearRectSelection();
+                clearTextSelection();
+                clearCounterSelection();
+                clearMosaicSelection();
+                setEditingTextId(null);
+                return;
+              }
+              const layerElement = (
+                event.target as HTMLElement | null
+              )?.closest?.("[data-layer-id]");
+              const layerId = layerElement?.getAttribute("data-layer-id");
+              if (layerId) {
+                setContextTarget("layer");
+                clearArrowSelection();
+                clearRectSelection();
+                clearTextSelection();
+                clearCounterSelection();
+                clearMosaicSelection();
+                clearMarkerSelection();
+                setEditingTextId(null);
+                if (!cropping || layerId === selectedId) {
+                  selectLayer(layerId);
+                }
+                return;
+              }
+              setContextTarget("canvas");
+              if (!cropping) {
+                clearAllSelections();
+              }
+            }}
+          >
+            <div className="checkerboard absolute inset-0" aria-hidden="true" />
 
-          {exportBounds && (
-            <>
-              {!isTransparentBackground(exportSettings.backgroundColor) && (
+            {exportBounds && (
+              <>
+                {!isTransparentBackground(exportSettings.backgroundColor) && (
+                  <div
+                    className="pointer-events-none absolute"
+                    style={{
+                      left: exportBounds.minX,
+                      top: exportBounds.minY,
+                      width: exportBounds.maxX - exportBounds.minX,
+                      height: exportBounds.maxY - exportBounds.minY,
+                      backgroundColor: exportSettings.backgroundColor,
+                      zIndex: 0,
+                    }}
+                    aria-hidden="true"
+                  />
+                )}
                 <div
-                  className="pointer-events-none absolute"
+                  className="pointer-events-none absolute box-border border border-black/25"
                   style={{
                     left: exportBounds.minX,
                     top: exportBounds.minY,
                     width: exportBounds.maxX - exportBounds.minX,
                     height: exportBounds.maxY - exportBounds.minY,
-                    backgroundColor: exportSettings.backgroundColor,
-                    zIndex: 0,
+                    zIndex: 2,
                   }}
                   aria-hidden="true"
                 />
-              )}
+                <span
+                  className="pointer-events-none absolute text-[8px] leading-none whitespace-nowrap text-black/45"
+                  style={{
+                    left: exportBounds.minX,
+                    top: exportBounds.minY - 2,
+                    transform: "translateY(-100%)",
+                    zIndex: 2,
+                  }}
+                  aria-hidden="true"
+                >
+                  Export area
+                </span>
+              </>
+            )}
+
+            {isDragOver && (
               <div
-                className="pointer-events-none absolute box-border border border-black/25"
-                style={{
-                  left: exportBounds.minX,
-                  top: exportBounds.minY,
-                  width: exportBounds.maxX - exportBounds.minX,
-                  height: exportBounds.maxY - exportBounds.minY,
-                  zIndex: 2,
-                }}
+                className="pointer-events-none absolute inset-2.5 z-20 rounded-2xl border-2 border-dashed border-ring bg-ring/10"
                 aria-hidden="true"
               />
-              <span
-                className="pointer-events-none absolute text-[8px] leading-none whitespace-nowrap text-black/45"
-                style={{
-                  left: exportBounds.minX,
-                  top: exportBounds.minY - 2,
-                  transform: "translateY(-100%)",
-                  zIndex: 2,
+            )}
+
+            {layers.length === 0 &&
+              arrows.length === 0 &&
+              rects.length === 0 &&
+              texts.length === 0 &&
+              counters.length === 0 &&
+              mosaics.length === 0 &&
+              markers.length === 0 && (
+                <div className="pointer-events-none absolute top-1/2 left-1/2 z-[1] w-[min(90vw,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-[30px] bg-background px-9 py-6 text-center shadow-neu-panel">
+                  <p className="m-0 mb-1.5 font-heading text-xl font-bold">
+                    画像を配置
+                  </p>
+                  <p className="m-0 text-sm text-muted-foreground">
+                    ドラッグ＆ドロップ、右クリックの貼り付け、または{" "}
+                    <KbdGroup>
+                      <Kbd>⌘V</Kbd>
+                      <span>/</span>
+                      <Kbd>Ctrl+V</Kbd>
+                    </KbdGroup>
+                  </p>
+                </div>
+              )}
+
+            {layers.map((layer, index) => (
+              <LayerImage
+                key={layer.id}
+                layer={layer}
+                selected={layer.id === selectedId && tool === "select"}
+                cropping={cropping && layer.id === selectedId}
+                crop={cropping && layer.id === selectedId ? crop : null}
+                zIndex={index + 1}
+                onSelect={() => {
+                  if (tool !== "select") {
+                    return;
+                  }
+                  if (cropping && layer.id !== selectedId) {
+                    return;
+                  }
+                  clearArrowSelection();
+                  clearRectSelection();
+                  clearTextSelection();
+                  clearCounterSelection();
+                  clearMosaicSelection();
+                  clearMarkerSelection();
+                  setEditingTextId(null);
+                  selectLayer(layer.id);
                 }}
-                aria-hidden="true"
+                onChange={(patch) => {
+                  beginGesture();
+                  updateLayer(layer.id, patch);
+                }}
+                onCropChange={setCrop}
+              />
+            ))}
+
+            {selectedLayer && !cropping && tool === "select" && (
+              <SelectionChrome
+                layer={selectedLayer}
+                onChange={(patch) => {
+                  beginGesture();
+                  updateLayer(selectedLayer.id, patch);
+                }}
+              />
+            )}
+
+            {mosaics.map((mosaic) => (
+              <MosaicView
+                key={mosaic.id}
+                mosaic={mosaic}
+                layers={layers}
+                selected={mosaic.id === selectedMosaicId && tool === "select"}
+                interactive={tool === "select" && !cropping}
+                onSelect={() => {
+                  clearLayerSelection();
+                  clearArrowSelection();
+                  clearRectSelection();
+                  clearTextSelection();
+                  clearCounterSelection();
+                  clearMarkerSelection();
+                  setEditingTextId(null);
+                  setSelectedMosaicId(mosaic.id);
+                }}
+                onChange={(patch) => {
+                  beginGesture();
+                  updateMosaic(mosaic.id, patch);
+                }}
+              />
+            ))}
+
+            {arrows.map((arrow) => (
+              <ArrowView
+                key={arrow.id}
+                arrow={arrow}
+                selected={arrow.id === selectedArrowId && tool === "select"}
+                interactive={tool === "select" && !cropping}
+                onSelect={() => {
+                  clearLayerSelection();
+                  clearRectSelection();
+                  clearTextSelection();
+                  clearCounterSelection();
+                  clearMosaicSelection();
+                  clearMarkerSelection();
+                  setEditingTextId(null);
+                  setSelectedArrowId(arrow.id);
+                }}
+                onChange={(patch) => {
+                  beginGesture();
+                  updateArrow(arrow.id, patch);
+                }}
+              />
+            ))}
+
+            {rects.map((rect) => (
+              <RectView
+                key={rect.id}
+                rect={rect}
+                selected={rect.id === selectedRectId && tool === "select"}
+                interactive={tool === "select" && !cropping}
+                onSelect={() => {
+                  clearLayerSelection();
+                  clearArrowSelection();
+                  clearTextSelection();
+                  clearCounterSelection();
+                  clearMosaicSelection();
+                  clearMarkerSelection();
+                  setEditingTextId(null);
+                  setSelectedRectId(rect.id);
+                }}
+                onChange={(patch) => {
+                  beginGesture();
+                  updateRect(rect.id, patch);
+                }}
+              />
+            ))}
+
+            {texts.map((text) => (
+              <TextView
+                key={text.id}
+                text={text}
+                selected={text.id === selectedTextId && tool === "select"}
+                interactive={tool === "select" && !cropping}
+                editing={text.id === editingTextId}
+                onSelect={() => {
+                  clearLayerSelection();
+                  clearArrowSelection();
+                  clearRectSelection();
+                  clearCounterSelection();
+                  clearMosaicSelection();
+                  clearMarkerSelection();
+                  setSelectedTextId(text.id);
+                }}
+                onChange={(patch) => {
+                  beginGesture();
+                  updateText(text.id, patch);
+                }}
+                onStartEdit={() => setEditingTextId(text.id)}
+                onEndEdit={() => setEditingTextId(null)}
+              />
+            ))}
+
+            {counters.map((counter) => (
+              <CounterView
+                key={counter.id}
+                counter={counter}
+                selected={counter.id === selectedCounterId && tool === "select"}
+                interactive={tool === "select" && !cropping}
+                onSelect={() => {
+                  clearLayerSelection();
+                  clearArrowSelection();
+                  clearRectSelection();
+                  clearTextSelection();
+                  clearMosaicSelection();
+                  clearMarkerSelection();
+                  setEditingTextId(null);
+                  setSelectedCounterId(counter.id);
+                }}
+                onChange={(patch) => {
+                  beginGesture();
+                  updateCounter(counter.id, patch);
+                }}
+              />
+            ))}
+
+            {markers.map((marker) => (
+              <MarkerView
+                key={marker.id}
+                marker={marker}
+                selected={marker.id === selectedMarkerId && tool === "select"}
+                interactive={tool === "select" && !cropping}
+                onSelect={() => {
+                  clearLayerSelection();
+                  clearArrowSelection();
+                  clearRectSelection();
+                  clearTextSelection();
+                  clearCounterSelection();
+                  clearMosaicSelection();
+                  setEditingTextId(null);
+                  setSelectedMarkerId(marker.id);
+                }}
+                onChange={(patch) => {
+                  beginGesture();
+                  updateMarker(marker.id, patch);
+                }}
+              />
+            ))}
+
+            {draftArrow && (
+              <ArrowView
+                arrow={{
+                  id: "draft",
+                  ...draftArrow,
+                  color: annotationStyle.color,
+                  strokeWidth: annotationStyle.strokeWidth,
+                }}
+                interactive={false}
+                onSelect={() => undefined}
+                onChange={() => undefined}
+              />
+            )}
+
+            {draftRect && draftRectBox && (
+              <RectView
+                rect={{
+                  id: "draft",
+                  ...draftRectBox,
+                  rotation: 0,
+                  color: annotationStyle.color,
+                  strokeWidth: annotationStyle.strokeWidth,
+                }}
+                interactive={false}
+                onSelect={() => undefined}
+                onChange={() => undefined}
+              />
+            )}
+
+            {draftMosaic && draftMosaicBox && (
+              <MosaicView
+                mosaic={{
+                  id: "draft",
+                  ...draftMosaicBox,
+                  rotation: 0,
+                  blockSize: mosaicStyle.blockSize,
+                }}
+                layers={layers}
+                outline
+                interactive={false}
+                onSelect={() => undefined}
+                onChange={() => undefined}
+              />
+            )}
+
+            {draftMarker && (
+              <MarkerView
+                marker={{
+                  id: "draft",
+                  ...draftMarker,
+                  color: markerStyle.color,
+                  strokeWidth: markerStyle.strokeWidth,
+                }}
+                interactive={false}
+                onSelect={() => undefined}
+                onChange={() => undefined}
+              />
+            )}
+
+            {tool === "select" && !cropping && selectedRect && (
+              <BoxSelectionChrome
+                x={selectedRect.x}
+                y={selectedRect.y}
+                width={selectedRect.width}
+                height={selectedRect.height}
+                rotation={selectedRect.rotation}
+                onChange={(patch) => {
+                  beginGesture();
+                  updateRect(selectedRect.id, patch);
+                }}
+              />
+            )}
+
+            {tool === "select" &&
+              !cropping &&
+              selectedText &&
+              !editingTextId && (
+                <BoxSelectionChrome
+                  x={selectedText.x}
+                  y={selectedText.y}
+                  width={getTextBoxSize(selectedText).width}
+                  height={getTextBoxSize(selectedText).height}
+                  rotation={selectedText.rotation}
+                  minWidth={MIN_TEXT_BOX_WIDTH}
+                  minHeight={MIN_TEXT_BOX_HEIGHT}
+                  onChange={(patch) => {
+                    beginGesture();
+                    updateText(selectedText.id, patch);
+                  }}
+                />
+              )}
+
+            {tool === "select" && !cropping && selectedMosaic && (
+              <BoxSelectionChrome
+                x={selectedMosaic.x}
+                y={selectedMosaic.y}
+                width={selectedMosaic.width}
+                height={selectedMosaic.height}
+                rotation={selectedMosaic.rotation}
+                onChange={(patch) => {
+                  beginGesture();
+                  updateMosaic(selectedMosaic.id, patch);
+                }}
+              />
+            )}
+
+            {tool === "select" && !cropping && selectedArrow && (
+              <ArrowSelectionChrome
+                arrow={selectedArrow}
+                onChange={(patch) => {
+                  beginGesture();
+                  updateArrow(selectedArrow.id, patch);
+                }}
+              />
+            )}
+
+            {tool === "select" && !cropping && selectedMarker && (
+              <MarkerSelectionChrome
+                marker={selectedMarker}
+                onChange={(patch) => {
+                  beginGesture();
+                  updateMarker(selectedMarker.id, patch);
+                }}
+              />
+            )}
+
+            {isDrawingTool && !cropping && (
+              <div
+                className="absolute inset-0 z-[4500] cursor-crosshair"
+                onPointerDown={onDrawPointerDown}
+                onPointerMove={onDrawPointerMove}
+                onPointerUp={onDrawPointerUp}
+                onPointerCancel={onDrawPointerUp}
+              />
+            )}
+
+            {isTextTool && !cropping && (
+              <div
+                className="absolute inset-0 z-[4500] cursor-text"
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  placeTextAt({ x: event.clientX, y: event.clientY });
+                }}
+              />
+            )}
+
+            {isCounterTool && !cropping && (
+              <div
+                className="absolute inset-0 z-[4500] cursor-crosshair"
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  placeCounterAt({ x: event.clientX, y: event.clientY });
+                }}
+              />
+            )}
+
+            <Toolbar
+              cropping={cropping}
+              canExport={canExport}
+              exporting={exporting}
+              canUndo={canUndo}
+              canRedo={canRedo}
+              canReset={canReset}
+              tool={tool}
+              showStrokeStyle={showStrokeStyle}
+              showTextStyle={showTextStyle}
+              showCounterStyle={showCounterStyle}
+              showMosaicStyle={showMosaicStyle}
+              showMarkerStyle={showMarkerStyle}
+              annotationStyle={activeAnnotationStyle}
+              textStyle={activeTextStyle}
+              counterStyle={activeCounterStyle}
+              mosaicStyle={activeMosaicStyle}
+              markerStyle={activeMarkerStyle}
+              annotationStyleLabel={annotationStyleLabel}
+              exportSettings={exportSettings}
+              onExportSettingsChange={(patch) =>
+                setExportSettings((current) => ({ ...current, ...patch }))
+              }
+              onToolChange={(next) => {
+                setTool(next);
+                setDraftArrow(null);
+                setDraftRect(null);
+                setDraftMosaic(null);
+                setDraftMarker(null);
+                draftRef.current = null;
+                setEditingTextId(null);
+                if (
+                  next === "arrow" ||
+                  next === "rect" ||
+                  next === "text" ||
+                  next === "counter" ||
+                  next === "mosaic" ||
+                  next === "marker"
+                ) {
+                  clearAllSelections();
+                  exitCrop();
+                }
+              }}
+              onAnnotationStyleChange={onAnnotationStyleChange}
+              onTextStyleChange={onTextStyleChange}
+              onCounterStyleChange={onCounterStyleChange}
+              onMosaicStyleChange={onMosaicStyleChange}
+              onMarkerStyleChange={onMarkerStyleChange}
+              onAdd={() => fileInputRef.current?.click()}
+              onUndo={undo}
+              onRedo={redo}
+              onReset={reset}
+              onDownload={() => void runExport("download")}
+              onCopy={() => void runExport("copy")}
+              onApplyCrop={() => void confirmCrop()}
+              onCancelCrop={exitCrop}
+            />
+
+            <input
+              ref={fileInputRef}
+              className="hidden"
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={onPickFiles}
+            />
+          </main>
+        </ContextMenuTrigger>
+
+        <ContextMenuContent className="w-52">
+          <ContextMenuItem
+            disabled={!canPasteImage && !canPasteInternal}
+            onSelect={() => {
+              void (async () => {
+                if (canPasteImage) {
+                  const files = await collectClipboardImages(null);
+                  if (files.length > 0) {
+                    await placeFiles(files, contextPointRef.current);
+                    return;
+                  }
+                }
+                if (await pasteLayerClipboard()) {
+                  return;
+                }
+                pasteAnnotationClipboard();
+              })();
+            }}
+          >
+            <ClipboardPaste />
+            貼り付け
+          </ContextMenuItem>
+
+          {showAnnotationMenu && (
+            <>
+              <ContextMenuItem
+                onSelect={() => {
+                  copySelectedAnnotation();
+                }}
               >
-                Export area
-              </span>
+                <ClipboardCopy />
+                コピー
+                <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuItem
+                onSelect={() => {
+                  duplicateSelectedAnnotation();
+                }}
+              >
+                <CopyPlus />
+                複製
+              </ContextMenuItem>
+              <ContextMenuSeparator />
+              <ContextMenuItem
+                variant="destructive"
+                onSelect={removeContextAnnotation}
+              >
+                <Trash2 />
+                削除
+              </ContextMenuItem>
             </>
           )}
 
-          {isDragOver && (
-            <div
-              className="pointer-events-none absolute inset-2.5 z-20 rounded-2xl border-2 border-dashed border-ring bg-ring/10"
-              aria-hidden="true"
-            />
+          {showLayerOrder && selectedId && (
+            <>
+              <ContextMenuItem
+                disabled={cropping}
+                onSelect={() => {
+                  void copySelectedLayer();
+                }}
+              >
+                <ClipboardCopy />
+                コピー
+                <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuItem
+                disabled={cropping}
+                onSelect={() => {
+                  void duplicateSelectedLayer();
+                }}
+              >
+                <CopyPlus />
+                複製
+              </ContextMenuItem>
+              <ContextMenuSeparator />
+              <ContextMenuItem
+                disabled={cropping}
+                onSelect={() => {
+                  startCrop();
+                }}
+              >
+                <Crop />
+                トリミング
+              </ContextMenuItem>
+              <ContextMenuItem
+                variant="destructive"
+                onSelect={() => {
+                  pushHistory();
+                  exitCrop();
+                  removeSelected();
+                }}
+              >
+                <Trash2 />
+                削除
+              </ContextMenuItem>
+              <ContextMenuSeparator />
+              <ContextMenuItem
+                disabled={!canBringToFront}
+                onSelect={() => {
+                  pushHistory();
+                  bringToFront(selectedId);
+                }}
+              >
+                <ArrowUpToLine />
+                最前面へ移動
+              </ContextMenuItem>
+              <ContextMenuItem
+                disabled={!canBringForward}
+                onSelect={() => {
+                  pushHistory();
+                  bringForward(selectedId);
+                }}
+              >
+                <ArrowUp />
+                前面へ移動
+              </ContextMenuItem>
+              <ContextMenuItem
+                disabled={!canSendBackward}
+                onSelect={() => {
+                  pushHistory();
+                  sendBackward(selectedId);
+                }}
+              >
+                <ArrowDown />
+                背面へ移動
+              </ContextMenuItem>
+              <ContextMenuItem
+                disabled={!canSendToBack}
+                onSelect={() => {
+                  pushHistory();
+                  sendToBack(selectedId);
+                }}
+              >
+                <ArrowDownToLine />
+                最背面へ移動
+              </ContextMenuItem>
+            </>
           )}
-
-          {layers.length === 0 &&
-            arrows.length === 0 &&
-            rects.length === 0 &&
-            texts.length === 0 &&
-            counters.length === 0 &&
-            mosaics.length === 0 &&
-            markers.length === 0 && (
-            <div className="pointer-events-none absolute top-1/2 left-1/2 z-[1] w-[min(90vw,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-[30px] bg-background px-9 py-6 text-center shadow-neu-panel">
-              <p className="m-0 mb-1.5 font-heading text-xl font-bold">画像を配置</p>
-              <p className="m-0 text-sm text-muted-foreground">
-                ドラッグ＆ドロップ、右クリックの貼り付け、または{" "}
-                <KbdGroup>
-                  <Kbd>⌘V</Kbd>
-                  <span>/</span>
-                  <Kbd>Ctrl+V</Kbd>
-                </KbdGroup>
-              </p>
-            </div>
-          )}
-
-          {layers.map((layer, index) => (
-            <LayerImage
-              key={layer.id}
-              layer={layer}
-              selected={layer.id === selectedId && tool === "select"}
-              cropping={cropping && layer.id === selectedId}
-              crop={cropping && layer.id === selectedId ? crop : null}
-              zIndex={index + 1}
-              onSelect={() => {
-                if (tool !== "select") {
-                  return;
-                }
-                if (cropping && layer.id !== selectedId) {
-                  return;
-                }
-                clearArrowSelection();
-                clearRectSelection();
-                clearTextSelection();
-                clearCounterSelection();
-                clearMosaicSelection();
-                clearMarkerSelection();
-                setEditingTextId(null);
-                selectLayer(layer.id);
-              }}
-              onChange={(patch) => {
-                beginGesture();
-                updateLayer(layer.id, patch);
-              }}
-              onCropChange={setCrop}
-            />
-          ))}
-
-          {selectedLayer && !cropping && tool === "select" && (
-            <SelectionChrome
-              layer={selectedLayer}
-              onChange={(patch) => {
-                beginGesture();
-                updateLayer(selectedLayer.id, patch);
-              }}
-            />
-          )}
-
-          {mosaics.map((mosaic) => (
-            <MosaicView
-              key={mosaic.id}
-              mosaic={mosaic}
-              layers={layers}
-              selected={mosaic.id === selectedMosaicId && tool === "select"}
-              interactive={tool === "select" && !cropping}
-              onSelect={() => {
-                clearLayerSelection();
-                clearArrowSelection();
-                clearRectSelection();
-                clearTextSelection();
-                clearCounterSelection();
-                clearMarkerSelection();
-                setEditingTextId(null);
-                setSelectedMosaicId(mosaic.id);
-              }}
-              onChange={(patch) => {
-                beginGesture();
-                updateMosaic(mosaic.id, patch);
-              }}
-            />
-          ))}
-
-          {arrows.map((arrow) => (
-            <ArrowView
-              key={arrow.id}
-              arrow={arrow}
-              selected={arrow.id === selectedArrowId && tool === "select"}
-              interactive={tool === "select" && !cropping}
-              onSelect={() => {
-                clearLayerSelection();
-                clearRectSelection();
-                clearTextSelection();
-                clearCounterSelection();
-                clearMosaicSelection();
-                clearMarkerSelection();
-                setEditingTextId(null);
-                setSelectedArrowId(arrow.id);
-              }}
-              onChange={(patch) => {
-                beginGesture();
-                updateArrow(arrow.id, patch);
-              }}
-            />
-          ))}
-
-          {rects.map((rect) => (
-            <RectView
-              key={rect.id}
-              rect={rect}
-              selected={rect.id === selectedRectId && tool === "select"}
-              interactive={tool === "select" && !cropping}
-              onSelect={() => {
-                clearLayerSelection();
-                clearArrowSelection();
-                clearTextSelection();
-                clearCounterSelection();
-                clearMosaicSelection();
-                clearMarkerSelection();
-                setEditingTextId(null);
-                setSelectedRectId(rect.id);
-              }}
-              onChange={(patch) => {
-                beginGesture();
-                updateRect(rect.id, patch);
-              }}
-            />
-          ))}
-
-          {texts.map((text) => (
-            <TextView
-              key={text.id}
-              text={text}
-              selected={text.id === selectedTextId && tool === "select"}
-              interactive={tool === "select" && !cropping}
-              editing={text.id === editingTextId}
-              onSelect={() => {
-                clearLayerSelection();
-                clearArrowSelection();
-                clearRectSelection();
-                clearCounterSelection();
-                clearMosaicSelection();
-                clearMarkerSelection();
-                setSelectedTextId(text.id);
-              }}
-              onChange={(patch) => {
-                beginGesture();
-                updateText(text.id, patch);
-              }}
-              onStartEdit={() => setEditingTextId(text.id)}
-              onEndEdit={() => setEditingTextId(null)}
-            />
-          ))}
-
-          {counters.map((counter) => (
-            <CounterView
-              key={counter.id}
-              counter={counter}
-              selected={counter.id === selectedCounterId && tool === "select"}
-              interactive={tool === "select" && !cropping}
-              onSelect={() => {
-                clearLayerSelection();
-                clearArrowSelection();
-                clearRectSelection();
-                clearTextSelection();
-                clearMosaicSelection();
-                clearMarkerSelection();
-                setEditingTextId(null);
-                setSelectedCounterId(counter.id);
-              }}
-              onChange={(patch) => {
-                beginGesture();
-                updateCounter(counter.id, patch);
-              }}
-            />
-          ))}
-
-          {markers.map((marker) => (
-            <MarkerView
-              key={marker.id}
-              marker={marker}
-              selected={marker.id === selectedMarkerId && tool === "select"}
-              interactive={tool === "select" && !cropping}
-              onSelect={() => {
-                clearLayerSelection();
-                clearArrowSelection();
-                clearRectSelection();
-                clearTextSelection();
-                clearCounterSelection();
-                clearMosaicSelection();
-                setEditingTextId(null);
-                setSelectedMarkerId(marker.id);
-              }}
-              onChange={(patch) => {
-                beginGesture();
-                updateMarker(marker.id, patch);
-              }}
-            />
-          ))}
-
-          {draftArrow && (
-            <ArrowView
-              arrow={{
-                id: "draft",
-                ...draftArrow,
-                color: annotationStyle.color,
-                strokeWidth: annotationStyle.strokeWidth,
-              }}
-              interactive={false}
-              onSelect={() => undefined}
-              onChange={() => undefined}
-            />
-          )}
-
-          {draftRect && draftRectBox && (
-            <RectView
-              rect={{
-                id: "draft",
-                ...draftRectBox,
-                rotation: 0,
-                color: annotationStyle.color,
-                strokeWidth: annotationStyle.strokeWidth,
-              }}
-              interactive={false}
-              onSelect={() => undefined}
-              onChange={() => undefined}
-            />
-          )}
-
-          {draftMosaic && draftMosaicBox && (
-            <MosaicView
-              mosaic={{
-                id: "draft",
-                ...draftMosaicBox,
-                rotation: 0,
-                blockSize: mosaicStyle.blockSize,
-              }}
-              layers={layers}
-              outline
-              interactive={false}
-              onSelect={() => undefined}
-              onChange={() => undefined}
-            />
-          )}
-
-          {draftMarker && (
-            <MarkerView
-              marker={{
-                id: "draft",
-                ...draftMarker,
-                color: markerStyle.color,
-                strokeWidth: markerStyle.strokeWidth,
-              }}
-              interactive={false}
-              onSelect={() => undefined}
-              onChange={() => undefined}
-            />
-          )}
-
-          {tool === "select" && !cropping && selectedRect && (
-            <BoxSelectionChrome
-              x={selectedRect.x}
-              y={selectedRect.y}
-              width={selectedRect.width}
-              height={selectedRect.height}
-              rotation={selectedRect.rotation}
-              onChange={(patch) => {
-                beginGesture();
-                updateRect(selectedRect.id, patch);
-              }}
-            />
-          )}
-
-          {tool === "select" && !cropping && selectedText && !editingTextId && (
-            <BoxSelectionChrome
-              x={selectedText.x}
-              y={selectedText.y}
-              width={getTextBoxSize(selectedText).width}
-              height={getTextBoxSize(selectedText).height}
-              rotation={selectedText.rotation}
-              minWidth={MIN_TEXT_BOX_WIDTH}
-              minHeight={MIN_TEXT_BOX_HEIGHT}
-              onChange={(patch) => {
-                beginGesture();
-                updateText(selectedText.id, patch);
-              }}
-            />
-          )}
-
-          {tool === "select" && !cropping && selectedMosaic && (
-            <BoxSelectionChrome
-              x={selectedMosaic.x}
-              y={selectedMosaic.y}
-              width={selectedMosaic.width}
-              height={selectedMosaic.height}
-              rotation={selectedMosaic.rotation}
-              onChange={(patch) => {
-                beginGesture();
-                updateMosaic(selectedMosaic.id, patch);
-              }}
-            />
-          )}
-
-          {tool === "select" && !cropping && selectedArrow && (
-            <ArrowSelectionChrome
-              arrow={selectedArrow}
-              onChange={(patch) => {
-                beginGesture();
-                updateArrow(selectedArrow.id, patch);
-              }}
-            />
-          )}
-
-          {tool === "select" && !cropping && selectedMarker && (
-            <MarkerSelectionChrome
-              marker={selectedMarker}
-              onChange={(patch) => {
-                beginGesture();
-                updateMarker(selectedMarker.id, patch);
-              }}
-            />
-          )}
-
-          {isDrawingTool && !cropping && (
-            <div
-              className="absolute inset-0 z-[4500] cursor-crosshair"
-              onPointerDown={onDrawPointerDown}
-              onPointerMove={onDrawPointerMove}
-              onPointerUp={onDrawPointerUp}
-              onPointerCancel={onDrawPointerUp}
-            />
-          )}
-
-          {isTextTool && !cropping && (
-            <div
-              className="absolute inset-0 z-[4500] cursor-text"
-              onPointerDown={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                placeTextAt({ x: event.clientX, y: event.clientY });
-              }}
-            />
-          )}
-
-          {isCounterTool && !cropping && (
-            <div
-              className="absolute inset-0 z-[4500] cursor-crosshair"
-              onPointerDown={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                placeCounterAt({ x: event.clientX, y: event.clientY });
-              }}
-            />
-          )}
-
-          <Toolbar
-            cropping={cropping}
-            canExport={canExport}
-            exporting={exporting}
-            canUndo={canUndo}
-            canRedo={canRedo}
-            canReset={canReset}
-            tool={tool}
-            showStrokeStyle={showStrokeStyle}
-            showTextStyle={showTextStyle}
-            showCounterStyle={showCounterStyle}
-            showMosaicStyle={showMosaicStyle}
-            showMarkerStyle={showMarkerStyle}
-            annotationStyle={activeAnnotationStyle}
-            textStyle={activeTextStyle}
-            counterStyle={activeCounterStyle}
-            mosaicStyle={activeMosaicStyle}
-            markerStyle={activeMarkerStyle}
-            annotationStyleLabel={annotationStyleLabel}
-            exportSettings={exportSettings}
-            onExportSettingsChange={(patch) => setExportSettings((current) => ({ ...current, ...patch }))}
-            onToolChange={(next) => {
-              setTool(next);
-              setDraftArrow(null);
-              setDraftRect(null);
-              setDraftMosaic(null);
-              setDraftMarker(null);
-              draftRef.current = null;
-              setEditingTextId(null);
-              if (
-                next === "arrow" ||
-                next === "rect" ||
-                next === "text" ||
-                next === "counter" ||
-                next === "mosaic" ||
-                next === "marker"
-              ) {
-                clearAllSelections();
-                exitCrop();
-              }
-            }}
-            onAnnotationStyleChange={onAnnotationStyleChange}
-            onTextStyleChange={onTextStyleChange}
-            onCounterStyleChange={onCounterStyleChange}
-            onMosaicStyleChange={onMosaicStyleChange}
-            onMarkerStyleChange={onMarkerStyleChange}
-            onAdd={() => fileInputRef.current?.click()}
-            onUndo={undo}
-            onRedo={redo}
-            onReset={reset}
-            onDownload={() => void runExport("download")}
-            onCopy={() => void runExport("copy")}
-            onApplyCrop={() => void confirmCrop()}
-            onCancelCrop={exitCrop}
-          />
-
-          <input
-            ref={fileInputRef}
-            className="hidden"
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={onPickFiles}
-          />
-        </main>
-      </ContextMenuTrigger>
-
-      <ContextMenuContent className="w-52">
-        <ContextMenuItem
-          disabled={!canPasteImage && !canPasteInternal}
-          onSelect={() => {
-            void (async () => {
-              if (canPasteImage) {
-                const files = await collectClipboardImages(null);
-                if (files.length > 0) {
-                  await placeFiles(files, contextPointRef.current);
-                  return;
-                }
-              }
-              if (await pasteLayerClipboard()) {
-                return;
-              }
-              pasteAnnotationClipboard();
-            })();
+        </ContextMenuContent>
+      </ContextMenu>
+      {eyedropperSession && (
+        <EyedropperOverlay
+          sampler={eyedropperSession.sampler}
+          previewColor={eyedropperSession.preview}
+          onPreview={(color) => {
+            setEyedropperSession((current) =>
+              current ? { ...current, preview: color } : current,
+            );
           }}
-        >
-          <ClipboardPaste />
-          貼り付け
-        </ContextMenuItem>
-
-        {showAnnotationMenu && (
-          <>
-            <ContextMenuItem
-              onSelect={() => {
-                copySelectedAnnotation();
-              }}
-            >
-              <ClipboardCopy />
-              コピー
-              <ContextMenuShortcut>⌘C</ContextMenuShortcut>
-            </ContextMenuItem>
-            <ContextMenuItem
-              onSelect={() => {
-                duplicateSelectedAnnotation();
-              }}
-            >
-              <CopyPlus />
-              複製
-            </ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem variant="destructive" onSelect={removeContextAnnotation}>
-              <Trash2 />
-              削除
-            </ContextMenuItem>
-          </>
-        )}
-
-        {showLayerOrder && selectedId && (
-          <>
-            <ContextMenuItem
-              disabled={cropping}
-              onSelect={() => {
-                void copySelectedLayer();
-              }}
-            >
-              <ClipboardCopy />
-              コピー
-              <ContextMenuShortcut>⌘C</ContextMenuShortcut>
-            </ContextMenuItem>
-            <ContextMenuItem
-              disabled={cropping}
-              onSelect={() => {
-                void duplicateSelectedLayer();
-              }}
-            >
-              <CopyPlus />
-              複製
-            </ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem
-              disabled={cropping}
-              onSelect={() => {
-                startCrop();
-              }}
-            >
-              <Crop />
-              トリミング
-            </ContextMenuItem>
-            <ContextMenuItem
-              variant="destructive"
-              onSelect={() => {
-                pushHistory();
-                exitCrop();
-                removeSelected();
-              }}
-            >
-              <Trash2 />
-              削除
-            </ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem
-              disabled={!canBringToFront}
-              onSelect={() => {
-                pushHistory();
-                bringToFront(selectedId);
-              }}
-            >
-              <ArrowUpToLine />
-              最前面へ移動
-            </ContextMenuItem>
-            <ContextMenuItem
-              disabled={!canBringForward}
-              onSelect={() => {
-                pushHistory();
-                bringForward(selectedId);
-              }}
-            >
-              <ArrowUp />
-              前面へ移動
-            </ContextMenuItem>
-            <ContextMenuItem
-              disabled={!canSendBackward}
-              onSelect={() => {
-                pushHistory();
-                sendBackward(selectedId);
-              }}
-            >
-              <ArrowDown />
-              背面へ移動
-            </ContextMenuItem>
-            <ContextMenuItem
-              disabled={!canSendToBack}
-              onSelect={() => {
-                pushHistory();
-                sendToBack(selectedId);
-              }}
-            >
-              <ArrowDownToLine />
-              最背面へ移動
-            </ContextMenuItem>
-          </>
-        )}
-      </ContextMenuContent>
-    </ContextMenu>
-    {eyedropperSession && (
-      <EyedropperOverlay
-        sampler={eyedropperSession.sampler}
-        previewColor={eyedropperSession.preview}
-        onPreview={(color) => {
-          setEyedropperSession((current) =>
-            current ? { ...current, preview: color } : current,
-          );
-        }}
-        onPick={(color) => {
-          eyedropperSession.onPick(color);
-          setEyedropperSession(null);
-        }}
-        onCancel={cancelEyedropper}
-      />
-    )}
+          onPick={(color) => {
+            eyedropperSession.onPick(color);
+            setEyedropperSession(null);
+          }}
+          onCancel={cancelEyedropper}
+        />
+      )}
     </EyedropperContext.Provider>
   );
 }
@@ -1983,5 +2178,7 @@ export function Editor() {
  * @returns {boolean} 画像ペイロードがあるとき true
  */
 function hasImagePayload(dataTransfer: DataTransfer): boolean {
-  return Array.from(dataTransfer.types).some((type) => type === "Files" || type.startsWith("image/"));
+  return Array.from(dataTransfer.types).some(
+    (type) => type === "Files" || type.startsWith("image/"),
+  );
 }

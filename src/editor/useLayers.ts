@@ -9,9 +9,18 @@ import type { CropRect, ImageLayer, LayerPatch, Point } from "./types";
  * @param toIndex 移動先のインデックス
  * @returns {ImageLayer[]} 新しい重ね順
  */
-function moveLayer(layers: ImageLayer[], id: string, toIndex: number): ImageLayer[] {
+function moveLayer(
+  layers: ImageLayer[],
+  id: string,
+  toIndex: number,
+): ImageLayer[] {
   const fromIndex = layers.findIndex((layer) => layer.id === id);
-  if (fromIndex < 0 || toIndex < 0 || toIndex >= layers.length || fromIndex === toIndex) {
+  if (
+    fromIndex < 0 ||
+    toIndex < 0 ||
+    toIndex >= layers.length ||
+    fromIndex === toIndex
+  ) {
     return layers;
   }
   const next = [...layers];

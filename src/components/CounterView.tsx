@@ -1,7 +1,11 @@
 import { useEffect, useRef, type PointerEvent } from "react";
 import { SELECTION_CHROME_Z } from "@/components/BoxSelectionChrome";
 import { counterLabelColor } from "@/editor/counterGeometry";
-import { TEXT_FONT_FAMILY, type CounterAnnotation, type CounterPatch } from "@/editor/types";
+import {
+  TEXT_FONT_FAMILY,
+  type CounterAnnotation,
+  type CounterPatch,
+} from "@/editor/types";
 import { cn } from "@/lib/utils";
 
 /** カウンター表示コンポーネントのプロパティ。 */
@@ -28,7 +32,13 @@ type DragState = {
  * @param props カウンターデータと操作コールバック
  * @returns {JSX.Element} カウンター表示
  */
-export function CounterView({ counter, selected, interactive, onSelect, onChange }: Props) {
+export function CounterView({
+  counter,
+  selected,
+  interactive,
+  onSelect,
+  onChange,
+}: Props) {
   const dragRef = useRef<DragState | null>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -88,7 +98,9 @@ export function CounterView({ counter, selected, interactive, onSelect, onChange
       className={cn(
         "absolute flex touch-none items-center justify-center rounded-full shadow-md",
         interactive ? "pointer-events-auto cursor-move" : "pointer-events-none",
-        selected && interactive && "outline outline-2 outline-[var(--brand)] outline-offset-2",
+        selected &&
+          interactive &&
+          "outline outline-2 outline-[var(--brand)] outline-offset-2",
       )}
       style={{
         left: counter.x - radius,

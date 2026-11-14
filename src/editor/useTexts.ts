@@ -20,27 +20,34 @@ export function useTexts() {
   const [texts, setTexts] = useState<TextAnnotation[]>([]);
   const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
 
-  const addText = useCallback((origin: Point, style?: Partial<TextStyle>, content = DEFAULT_TEXT_CONTENT) => {
-    const fontSize = style?.fontSize ?? DEFAULT_TEXT_SIZE;
-    const fontWeight = style?.fontWeight ?? DEFAULT_TEXT_WEIGHT;
-    const box = measureTextBox({ text: content, fontSize, fontWeight });
-    const draft: TextAnnotation = {
-      id: crypto.randomUUID(),
-      x: Math.round(origin.x),
-      y: Math.round(origin.y),
-      width: box.width,
-      height: box.height,
-      text: content,
-      fontSize,
-      fontWeight,
-      color: style?.color ?? DEFAULT_TEXT_COLOR,
-      backgroundColor: style?.backgroundColor ?? DEFAULT_TEXT_BACKGROUND,
-      rotation: 0,
-    };
-    setTexts((current) => [...current, draft]);
-    setSelectedTextId(draft.id);
-    return draft.id;
-  }, []);
+  const addText = useCallback(
+    (
+      origin: Point,
+      style?: Partial<TextStyle>,
+      content = DEFAULT_TEXT_CONTENT,
+    ) => {
+      const fontSize = style?.fontSize ?? DEFAULT_TEXT_SIZE;
+      const fontWeight = style?.fontWeight ?? DEFAULT_TEXT_WEIGHT;
+      const box = measureTextBox({ text: content, fontSize, fontWeight });
+      const draft: TextAnnotation = {
+        id: crypto.randomUUID(),
+        x: Math.round(origin.x),
+        y: Math.round(origin.y),
+        width: box.width,
+        height: box.height,
+        text: content,
+        fontSize,
+        fontWeight,
+        color: style?.color ?? DEFAULT_TEXT_COLOR,
+        backgroundColor: style?.backgroundColor ?? DEFAULT_TEXT_BACKGROUND,
+        rotation: 0,
+      };
+      setTexts((current) => [...current, draft]);
+      setSelectedTextId(draft.id);
+      return draft.id;
+    },
+    [],
+  );
 
   const insertText = useCallback((data: Omit<TextAnnotation, "id">) => {
     const measured = measureTextBox(data);
@@ -57,7 +64,9 @@ export function useTexts() {
   }, []);
 
   const updateText = useCallback((id: string, patch: TextPatch) => {
-    setTexts((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+    setTexts((current) =>
+      current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+    );
   }, []);
 
   const removeText = useCallback((id: string) => {

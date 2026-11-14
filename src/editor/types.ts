@@ -29,11 +29,22 @@ export type CropRect = {
 
 /** 画像レイヤーの部分更新。 */
 export type LayerPatch = Partial<
-  Pick<ImageLayer, "x" | "y" | "width" | "height" | "src" | "naturalWidth" | "naturalHeight" | "rotation">
+  Pick<
+    ImageLayer,
+    | "x"
+    | "y"
+    | "width"
+    | "height"
+    | "src"
+    | "naturalWidth"
+    | "naturalHeight"
+    | "rotation"
+  >
 >;
 
 /** エディタの操作モード。 */
-export type EditorTool = "select" | "arrow" | "rect" | "text" | "counter" | "mosaic" | "marker";
+export type EditorTool =
+  "select" | "arrow" | "rect" | "text" | "counter" | "mosaic" | "marker";
 
 /** 矢印注釈（始点 → 終点）。 */
 export type ArrowAnnotation = {
@@ -47,7 +58,9 @@ export type ArrowAnnotation = {
 };
 
 /** 矢印注釈の部分更新。 */
-export type ArrowPatch = Partial<Pick<ArrowAnnotation, "x1" | "y1" | "x2" | "y2" | "color" | "strokeWidth">>;
+export type ArrowPatch = Partial<
+  Pick<ArrowAnnotation, "x1" | "y1" | "x2" | "y2" | "color" | "strokeWidth">
+>;
 
 /** 枠注釈。 */
 export type RectAnnotation = {
@@ -63,7 +76,10 @@ export type RectAnnotation = {
 
 /** 枠注釈の部分更新。 */
 export type RectPatch = Partial<
-  Pick<RectAnnotation, "x" | "y" | "width" | "height" | "rotation" | "color" | "strokeWidth">
+  Pick<
+    RectAnnotation,
+    "x" | "y" | "width" | "height" | "rotation" | "color" | "strokeWidth"
+  >
 >;
 
 /** テキスト注釈。 */
@@ -110,7 +126,8 @@ export type TextStyle = {
 };
 
 /** テキスト描画に使うフォントファミリー。 */
-export const TEXT_FONT_FAMILY = '"LINE Seed JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif';
+export const TEXT_FONT_FAMILY =
+  '"LINE Seed JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif';
 /** テキスト色の初期値。 */
 export const DEFAULT_TEXT_COLOR = "#32CD32";
 /** テキスト背景色の初期値。 */
@@ -154,12 +171,18 @@ export const EXPORT_PADDING_STEP = 4;
  * @param color 背景色。未指定も背景なし
  * @returns {boolean} 透明なら true
  */
-export function isTransparentBackground(color: string | undefined | null): boolean {
+export function isTransparentBackground(
+  color: string | undefined | null,
+): boolean {
   if (!color) {
     return true;
   }
   const normalized = color.trim().toLowerCase();
-  return normalized === "transparent" || normalized === "rgba(0, 0, 0, 0)" || normalized === "rgba(0,0,0,0)";
+  return (
+    normalized === "transparent" ||
+    normalized === "rgba(0, 0, 0, 0)" ||
+    normalized === "rgba(0,0,0,0)"
+  );
 }
 
 /** カウンター注釈（連番の円マーカー）。 */
@@ -175,7 +198,9 @@ export type CounterAnnotation = {
 };
 
 /** カウンター注釈の部分更新。 */
-export type CounterPatch = Partial<Pick<CounterAnnotation, "x" | "y" | "value" | "color" | "size">>;
+export type CounterPatch = Partial<
+  Pick<CounterAnnotation, "x" | "y" | "value" | "color" | "size">
+>;
 
 /** 新規カウンターに使う色とサイズ。 */
 export type CounterStyle = {
@@ -208,7 +233,10 @@ export type MosaicAnnotation = {
 
 /** モザイク注釈の部分更新。 */
 export type MosaicPatch = Partial<
-  Pick<MosaicAnnotation, "x" | "y" | "width" | "height" | "rotation" | "blockSize">
+  Pick<
+    MosaicAnnotation,
+    "x" | "y" | "width" | "height" | "rotation" | "blockSize"
+  >
 >;
 
 /** 新規モザイクの粗さ。 */
@@ -233,7 +261,9 @@ export type MarkerAnnotation = {
 };
 
 /** マーカー注釈の部分更新。 */
-export type MarkerPatch = Partial<Pick<MarkerAnnotation, "x1" | "y1" | "x2" | "y2" | "color" | "strokeWidth">>;
+export type MarkerPatch = Partial<
+  Pick<MarkerAnnotation, "x1" | "y1" | "x2" | "y2" | "color" | "strokeWidth">
+>;
 
 /** 新規マーカーの色と太さ。 */
 export type MarkerStyle = {

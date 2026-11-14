@@ -20,22 +20,25 @@ export function useArrows() {
   const [arrows, setArrows] = useState<ArrowAnnotation[]>([]);
   const [selectedArrowId, setSelectedArrowId] = useState<string | null>(null);
 
-  const addArrow = useCallback((from: Point, to: Point, style?: Partial<AnnotationStyle>) => {
-    const draft: ArrowAnnotation = {
-      id: crypto.randomUUID(),
-      x1: from.x,
-      y1: from.y,
-      x2: to.x,
-      y2: to.y,
-      color: style?.color ?? DEFAULT_ANNOTATION_COLOR,
-      strokeWidth: style?.strokeWidth ?? DEFAULT_ANNOTATION_STROKE,
-    };
-    if (arrowLength(draft) < MIN_ARROW_LENGTH) {
-      return null;
-    }
-    setArrows((current) => [...current, draft]);
-    return draft.id;
-  }, []);
+  const addArrow = useCallback(
+    (from: Point, to: Point, style?: Partial<AnnotationStyle>) => {
+      const draft: ArrowAnnotation = {
+        id: crypto.randomUUID(),
+        x1: from.x,
+        y1: from.y,
+        x2: to.x,
+        y2: to.y,
+        color: style?.color ?? DEFAULT_ANNOTATION_COLOR,
+        strokeWidth: style?.strokeWidth ?? DEFAULT_ANNOTATION_STROKE,
+      };
+      if (arrowLength(draft) < MIN_ARROW_LENGTH) {
+        return null;
+      }
+      setArrows((current) => [...current, draft]);
+      return draft.id;
+    },
+    [],
+  );
 
   const insertArrow = useCallback((data: Omit<ArrowAnnotation, "id">) => {
     const draft: ArrowAnnotation = { ...data, id: crypto.randomUUID() };
@@ -45,7 +48,11 @@ export function useArrows() {
   }, []);
 
   const updateArrow = useCallback((id: string, patch: ArrowPatch) => {
-    setArrows((current) => current.map((arrow) => (arrow.id === id ? { ...arrow, ...patch } : arrow)));
+    setArrows((current) =>
+      current.map((arrow) =>
+        arrow.id === id ? { ...arrow, ...patch } : arrow,
+      ),
+    );
   }, []);
 
   const removeArrow = useCallback((id: string) => {

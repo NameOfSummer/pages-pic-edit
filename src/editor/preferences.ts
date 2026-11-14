@@ -43,7 +43,10 @@ export const PREFERENCES_STORAGE_KEY = "pic-edit:preferences:v1";
 
 /** 保存値がないとき・壊れているときに使う初期設定。 */
 export const DEFAULT_EDITOR_PREFERENCES: EditorPreferences = {
-  annotation: { color: DEFAULT_ANNOTATION_COLOR, strokeWidth: DEFAULT_ANNOTATION_STROKE },
+  annotation: {
+    color: DEFAULT_ANNOTATION_COLOR,
+    strokeWidth: DEFAULT_ANNOTATION_STROKE,
+  },
   text: {
     color: DEFAULT_TEXT_COLOR,
     backgroundColor: DEFAULT_TEXT_BACKGROUND,
@@ -53,7 +56,10 @@ export const DEFAULT_EDITOR_PREFERENCES: EditorPreferences = {
   counter: { color: DEFAULT_COUNTER_COLOR, size: DEFAULT_COUNTER_SIZE },
   mosaic: { blockSize: DEFAULT_MOSAIC_BLOCK },
   marker: { color: DEFAULT_MARKER_COLOR, strokeWidth: DEFAULT_MARKER_STROKE },
-  export: { backgroundColor: DEFAULT_EXPORT_BACKGROUND, padding: EXPORT_PADDING_PX },
+  export: {
+    backgroundColor: DEFAULT_EXPORT_BACKGROUND,
+    padding: EXPORT_PADDING_PX,
+  },
 };
 
 /** 背景なしを表す値。 */
@@ -80,7 +86,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  * @returns {string} 色
  */
 function readHexColor(value: unknown, fallback: string): string {
-  return typeof value === "string" && HEX_COLOR_PATTERN.test(value) ? value : fallback;
+  return typeof value === "string" && HEX_COLOR_PATTERN.test(value)
+    ? value
+    : fallback;
 }
 
 /**
@@ -101,8 +109,18 @@ function readBackgroundColor(value: unknown, fallback: string): string {
  * @param fallback 不正なときの値
  * @returns {number} 数値
  */
-function readIntInRange(value: unknown, min: number, max: number, fallback: number): number {
-  return typeof value === "number" && Number.isInteger(value) && value >= min && value <= max ? value : fallback;
+function readIntInRange(
+  value: unknown,
+  min: number,
+  max: number,
+  fallback: number,
+): number {
+  return typeof value === "number" &&
+    Number.isInteger(value) &&
+    value >= min &&
+    value <= max
+    ? value
+    : fallback;
 }
 
 /**
@@ -112,8 +130,14 @@ function readIntInRange(value: unknown, min: number, max: number, fallback: numb
  * @param fallback 不正なときの値
  * @returns {number} 数値
  */
-function readOption(value: unknown, options: readonly number[], fallback: number): number {
-  return typeof value === "number" && options.includes(value) ? value : fallback;
+function readOption(
+  value: unknown,
+  options: readonly number[],
+  fallback: number,
+): number {
+  return typeof value === "number" && options.includes(value)
+    ? value
+    : fallback;
 }
 
 /**
@@ -122,7 +146,10 @@ function readOption(value: unknown, options: readonly number[], fallback: number
  * @param key セクション名
  * @returns {Record<string, unknown>} セクション
  */
-function readSection(source: Record<string, unknown>, key: keyof EditorPreferences): Record<string, unknown> {
+function readSection(
+  source: Record<string, unknown>,
+  key: keyof EditorPreferences,
+): Record<string, unknown> {
   const section = source[key];
   return isRecord(section) ? section : {};
 }
@@ -156,24 +183,50 @@ export function parseEditorPreferences(raw: unknown): EditorPreferences {
     },
     text: {
       color: readHexColor(text.color, defaults.text.color),
-      backgroundColor: readBackgroundColor(text.backgroundColor, defaults.text.backgroundColor),
-      fontSize: readOption(text.fontSize, TEXT_FONT_SIZES, defaults.text.fontSize),
-      fontWeight: text.fontWeight === "normal" || text.fontWeight === "bold" ? text.fontWeight : defaults.text.fontWeight,
+      backgroundColor: readBackgroundColor(
+        text.backgroundColor,
+        defaults.text.backgroundColor,
+      ),
+      fontSize: readOption(
+        text.fontSize,
+        TEXT_FONT_SIZES,
+        defaults.text.fontSize,
+      ),
+      fontWeight:
+        text.fontWeight === "normal" || text.fontWeight === "bold"
+          ? text.fontWeight
+          : defaults.text.fontWeight,
     },
     counter: {
       color: readHexColor(counter.color, defaults.counter.color),
       size: readOption(counter.size, COUNTER_SIZES, defaults.counter.size),
     },
     mosaic: {
-      blockSize: readOption(mosaic.blockSize, MOSAIC_BLOCK_SIZES, defaults.mosaic.blockSize),
+      blockSize: readOption(
+        mosaic.blockSize,
+        MOSAIC_BLOCK_SIZES,
+        defaults.mosaic.blockSize,
+      ),
     },
     marker: {
       color: readHexColor(marker.color, defaults.marker.color),
-      strokeWidth: readOption(marker.strokeWidth, MARKER_STROKE_WIDTHS, defaults.marker.strokeWidth),
+      strokeWidth: readOption(
+        marker.strokeWidth,
+        MARKER_STROKE_WIDTHS,
+        defaults.marker.strokeWidth,
+      ),
     },
     export: {
-      backgroundColor: readBackgroundColor(exportSettings.backgroundColor, defaults.export.backgroundColor),
-      padding: readIntInRange(exportSettings.padding, EXPORT_PADDING_MIN, EXPORT_PADDING_MAX, defaults.export.padding),
+      backgroundColor: readBackgroundColor(
+        exportSettings.backgroundColor,
+        defaults.export.backgroundColor,
+      ),
+      padding: readIntInRange(
+        exportSettings.padding,
+        EXPORT_PADDING_MIN,
+        EXPORT_PADDING_MAX,
+        defaults.export.padding,
+      ),
     },
   };
 }
@@ -202,7 +255,10 @@ export function loadEditorPreferences(): EditorPreferences {
  */
 export function saveEditorPreferences(preferences: EditorPreferences): void {
   try {
-    window.localStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify(preferences));
+    window.localStorage.setItem(
+      PREFERENCES_STORAGE_KEY,
+      JSON.stringify(preferences),
+    );
   } catch (error) {
     if (!hasWarnedSaveFailure) {
       hasWarnedSaveFailure = true;

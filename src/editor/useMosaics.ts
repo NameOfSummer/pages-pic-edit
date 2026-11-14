@@ -19,20 +19,23 @@ export function useMosaics() {
   const [mosaics, setMosaics] = useState<MosaicAnnotation[]>([]);
   const [selectedMosaicId, setSelectedMosaicId] = useState<string | null>(null);
 
-  const addMosaic = useCallback((from: Point, to: Point, style?: Partial<MosaicStyle>) => {
-    const box = normalizeRectFromDrag(from.x, from.y, to.x, to.y);
-    if (box.width < MIN_MOSAIC_SIZE || box.height < MIN_MOSAIC_SIZE) {
-      return null;
-    }
-    const draft: MosaicAnnotation = {
-      id: crypto.randomUUID(),
-      ...box,
-      rotation: 0,
-      blockSize: style?.blockSize ?? DEFAULT_MOSAIC_BLOCK,
-    };
-    setMosaics((current) => [...current, draft]);
-    return draft.id;
-  }, []);
+  const addMosaic = useCallback(
+    (from: Point, to: Point, style?: Partial<MosaicStyle>) => {
+      const box = normalizeRectFromDrag(from.x, from.y, to.x, to.y);
+      if (box.width < MIN_MOSAIC_SIZE || box.height < MIN_MOSAIC_SIZE) {
+        return null;
+      }
+      const draft: MosaicAnnotation = {
+        id: crypto.randomUUID(),
+        ...box,
+        rotation: 0,
+        blockSize: style?.blockSize ?? DEFAULT_MOSAIC_BLOCK,
+      };
+      setMosaics((current) => [...current, draft]);
+      return draft.id;
+    },
+    [],
+  );
 
   const insertMosaic = useCallback((data: Omit<MosaicAnnotation, "id">) => {
     const draft: MosaicAnnotation = { ...data, id: crypto.randomUUID() };
@@ -42,7 +45,9 @@ export function useMosaics() {
   }, []);
 
   const updateMosaic = useCallback((id: string, patch: MosaicPatch) => {
-    setMosaics((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+    setMosaics((current) =>
+      current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+    );
   }, []);
 
   const removeMosaic = useCallback((id: string) => {

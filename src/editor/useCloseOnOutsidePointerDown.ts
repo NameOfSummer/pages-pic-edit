@@ -29,13 +29,17 @@ export function useCloseOnOutsidePointerDown(
       if (!(target instanceof Element)) {
         return;
       }
-      if (target.closest("[data-radix-popper-content-wrapper]") || triggerRef.current?.contains(target)) {
+      if (
+        target.closest("[data-radix-popper-content-wrapper]") ||
+        triggerRef.current?.contains(target)
+      ) {
         return;
       }
       onClose();
     }
 
     document.addEventListener("pointerdown", onPointerDown, true);
-    return () => document.removeEventListener("pointerdown", onPointerDown, true);
+    return () =>
+      document.removeEventListener("pointerdown", onPointerDown, true);
   }, [open, triggerRef, onClose]);
 }

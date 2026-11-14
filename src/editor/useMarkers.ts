@@ -21,7 +21,12 @@ export function useMarkers() {
   const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
 
   const addMarker = useCallback(
-    (from: Point, to: Point, style?: Partial<MarkerStyle>, shiftKey = false) => {
+    (
+      from: Point,
+      to: Point,
+      style?: Partial<MarkerStyle>,
+      shiftKey = false,
+    ) => {
       const line = straightenMarkerLine(from, to, { shiftKey });
       const draft: MarkerAnnotation = {
         id: crypto.randomUUID(),
@@ -46,7 +51,9 @@ export function useMarkers() {
   }, []);
 
   const updateMarker = useCallback((id: string, patch: MarkerPatch) => {
-    setMarkers((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+    setMarkers((current) =>
+      current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+    );
   }, []);
 
   const removeMarker = useCallback((id: string) => {

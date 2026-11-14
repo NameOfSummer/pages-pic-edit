@@ -27,7 +27,13 @@ type DragState = {
  * @param props 矢印データと操作コールバック
  * @returns {JSX.Element} 矢印 SVG
  */
-export function ArrowView({ arrow, selected = false, interactive, onSelect, onChange }: Props) {
+export function ArrowView({
+  arrow,
+  selected = false,
+  interactive,
+  onSelect,
+  onChange,
+}: Props) {
   const dragRef = useRef<DragState | null>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -35,8 +41,14 @@ export function ArrowView({ arrow, selected = false, interactive, onSelect, onCh
   const [tip, left, right] = arrowHeadPoints(arrow);
   const minX = Math.min(arrow.x1, arrow.x2, left.x, right.x) - 12;
   const minY = Math.min(arrow.y1, arrow.y2, left.y, right.y) - 12;
-  const width = Math.max(24, Math.max(arrow.x1, arrow.x2, left.x, right.x) - minX + 12);
-  const height = Math.max(24, Math.max(arrow.y1, arrow.y2, left.y, right.y) - minY + 12);
+  const width = Math.max(
+    24,
+    Math.max(arrow.x1, arrow.x2, left.x, right.x) - minX + 12,
+  );
+  const height = Math.max(
+    24,
+    Math.max(arrow.y1, arrow.y2, left.y, right.y) - minY + 12,
+  );
 
   const toLocal = (x: number, y: number) => ({ x: x - minX, y: y - minY });
   const p1 = toLocal(arrow.x1, arrow.y1);
@@ -97,8 +109,17 @@ export function ArrowView({ arrow, selected = false, interactive, onSelect, onCh
   return (
     <svg
       data-arrow-id={arrow.id}
-      className={cn("absolute overflow-visible", interactive ? "pointer-events-auto" : "pointer-events-none")}
-      style={{ left: minX, top: minY, width, height, zIndex: selected ? SELECTION_CHROME_Z - 1 : 4000 }}
+      className={cn(
+        "absolute overflow-visible",
+        interactive ? "pointer-events-auto" : "pointer-events-none",
+      )}
+      style={{
+        left: minX,
+        top: minY,
+        width,
+        height,
+        zIndex: selected ? SELECTION_CHROME_Z - 1 : 4000,
+      }}
     >
       <line
         x1={p1.x}

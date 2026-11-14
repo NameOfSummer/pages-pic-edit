@@ -66,7 +66,10 @@ export function SelectionChrome({ layer, onChange }: Props) {
     event.preventDefault();
     const centerX = layer.x + layer.width / 2;
     const centerY = layer.y + layer.height / 2;
-    const startDistance = Math.hypot(event.clientX - centerX, event.clientY - centerY);
+    const startDistance = Math.hypot(
+      event.clientX - centerX,
+      event.clientY - centerY,
+    );
     dragRef.current = {
       kind: "resize",
       pointerId: event.pointerId,
@@ -84,7 +87,9 @@ export function SelectionChrome({ layer, onChange }: Props) {
     event.preventDefault();
     const centerX = layer.x + layer.width / 2;
     const centerY = layer.y + layer.height / 2;
-    const pointerAngle = (Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180) / Math.PI;
+    const pointerAngle =
+      (Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180) /
+      Math.PI;
     dragRef.current = {
       kind: "rotate",
       pointerId: event.pointerId,
@@ -103,13 +108,22 @@ export function SelectionChrome({ layer, onChange }: Props) {
     }
 
     if (drag.kind === "rotate") {
-      const pointerAngle = (Math.atan2(event.clientY - drag.centerY, event.clientX - drag.centerX) * 180) / Math.PI;
+      const pointerAngle =
+        (Math.atan2(
+          event.clientY - drag.centerY,
+          event.clientX - drag.centerX,
+        ) *
+          180) /
+        Math.PI;
       const next = drag.originRotation + (pointerAngle - drag.startAngle);
       onChange({ rotation: snapRotation(next, event.shiftKey) });
       return;
     }
 
-    const distance = Math.hypot(event.clientX - drag.centerX, event.clientY - drag.centerY);
+    const distance = Math.hypot(
+      event.clientX - drag.centerX,
+      event.clientY - drag.centerY,
+    );
     const scale = distance / drag.startDistance;
     const nextWidth = Math.max(48, Math.round(drag.startWidth * scale));
     const nextHeight = Math.max(48, Math.round(drag.startHeight * scale));

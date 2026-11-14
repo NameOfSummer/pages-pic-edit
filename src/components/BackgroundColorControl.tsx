@@ -1,7 +1,11 @@
 import { useRef, useState } from "react";
 import { Popover } from "radix-ui";
 import { ColorPickerButton } from "@/components/ColorPickerButton";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   DEFAULT_EXPORT_BACKGROUND,
   EXPORT_BACKGROUND_COLORS,
@@ -71,13 +75,20 @@ export function BackgroundColorControl({ value, side, onChange }: Props) {
           collisionPadding={12}
           className="z-[11000] outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
         >
-          <div className="neu-panel flex items-center gap-2 px-3.5 py-3" role="group" aria-label="背景色">
+          <div
+            className="neu-panel flex items-center gap-2 px-3.5 py-3"
+            role="group"
+            aria-label="背景色"
+          >
             <button
               type="button"
               title="透明"
               aria-label="背景なし（透明）"
               aria-pressed={transparent}
-              className={cn("neu-swatch size-[22px] outline -outline-offset-1 outline-black/15", transparentSwatchClass)}
+              className={cn(
+                "neu-swatch size-[22px] outline -outline-offset-1 outline-black/15",
+                transparentSwatchClass,
+              )}
               onClick={() => onChange("transparent")}
             />
             {EXPORT_BACKGROUND_COLORS.map(({ color, label }) => (
@@ -86,7 +97,9 @@ export function BackgroundColorControl({ value, side, onChange }: Props) {
                 type="button"
                 title={label}
                 aria-label={`背景色 ${label}`}
-                aria-pressed={!transparent && value.toLowerCase() === color.toLowerCase()}
+                aria-pressed={
+                  !transparent && value.toLowerCase() === color.toLowerCase()
+                }
                 className="neu-swatch size-[22px] outline -outline-offset-1 outline-black/15"
                 style={{ backgroundColor: color }}
                 onClick={() => onChange(color)}

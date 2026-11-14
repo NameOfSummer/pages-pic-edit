@@ -22,7 +22,9 @@ export const MIN_TEXT_BOX_HEIGHT = 24;
  * @param text サイズと太さ
  * @returns {string} CSS font 値
  */
-function fontCss(text: Pick<TextAnnotation, "fontSize" | "fontWeight">): string {
+function fontCss(
+  text: Pick<TextAnnotation, "fontSize" | "fontWeight">,
+): string {
   return `${text.fontWeight === "bold" ? "700" : "400"} ${text.fontSize}px ${TEXT_FONT_FAMILY}`;
 }
 
@@ -31,14 +33,17 @@ function fontCss(text: Pick<TextAnnotation, "fontSize" | "fontWeight">): string 
  * @param text 文字列・サイズ・太さ
  * @returns {{ width: number; height: number }} 最小サイズ以上の幅と高さ
  */
-export function measureTextBox(text: Pick<TextAnnotation, "text" | "fontSize" | "fontWeight">): {
+export function measureTextBox(
+  text: Pick<TextAnnotation, "text" | "fontSize" | "fontWeight">,
+): {
   width: number;
   height: number;
 } {
   if (typeof document === "undefined") {
     const lines = text.text.split("\n");
     return {
-      width: Math.max(1, ...lines.map((line) => line.length)) * text.fontSize * 0.6,
+      width:
+        Math.max(1, ...lines.map((line) => line.length)) * text.fontSize * 0.6,
       height: Math.max(1, lines.length) * text.fontSize * 1.25,
     };
   }
@@ -108,7 +113,10 @@ export function wrapTextLines(
  * @param text テキスト注釈
  * @returns {{ width: number; height: number }} ボックスサイズ
  */
-export function getTextBoxSize(text: TextAnnotation): { width: number; height: number } {
+export function getTextBoxSize(text: TextAnnotation): {
+  width: number;
+  height: number;
+} {
   if (!(text.width > 0) || !(text.height > 0)) {
     return measureTextBox(text);
   }

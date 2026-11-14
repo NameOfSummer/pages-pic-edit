@@ -96,7 +96,9 @@ export function shiftAnnotationClipboard(
  * @param item id を持つ注釈
  * @returns {Omit<T, "id">} id を除いたデータ
  */
-export function omitAnnotationId<T extends { id: string }>(item: T): Omit<T, "id"> {
+export function omitAnnotationId<T extends { id: string }>(
+  item: T,
+): Omit<T, "id"> {
   const { id: _id, ...rest } = item;
   return rest;
 }

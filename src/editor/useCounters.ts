@@ -26,7 +26,10 @@ function nextCounterValue(counters: CounterAnnotation[]): number {
  * @param removedValue 削除した番号
  * @returns {CounterAnnotation[]} 繰り下げ後の配列
  */
-function afterRemove(counters: CounterAnnotation[], removedValue: number): CounterAnnotation[] {
+function afterRemove(
+  counters: CounterAnnotation[],
+  removedValue: number,
+): CounterAnnotation[] {
   return counters.map((item) =>
     item.value > removedValue ? { ...item, value: item.value - 1 } : item,
   );
@@ -38,24 +41,29 @@ function afterRemove(counters: CounterAnnotation[], removedValue: number): Count
  */
 export function useCounters() {
   const [counters, setCounters] = useState<CounterAnnotation[]>([]);
-  const [selectedCounterId, setSelectedCounterId] = useState<string | null>(null);
+  const [selectedCounterId, setSelectedCounterId] = useState<string | null>(
+    null,
+  );
 
-  const addCounter = useCallback((origin: Point, style?: Partial<CounterStyle>) => {
-    const id = crypto.randomUUID();
-    setCounters((current) => {
-      const draft: CounterAnnotation = {
-        id,
-        x: Math.round(origin.x),
-        y: Math.round(origin.y),
-        value: nextCounterValue(current),
-        color: style?.color ?? DEFAULT_COUNTER_COLOR,
-        size: style?.size ?? DEFAULT_COUNTER_SIZE,
-      };
-      return [...current, draft];
-    });
-    setSelectedCounterId(id);
-    return id;
-  }, []);
+  const addCounter = useCallback(
+    (origin: Point, style?: Partial<CounterStyle>) => {
+      const id = crypto.randomUUID();
+      setCounters((current) => {
+        const draft: CounterAnnotation = {
+          id,
+          x: Math.round(origin.x),
+          y: Math.round(origin.y),
+          value: nextCounterValue(current),
+          color: style?.color ?? DEFAULT_COUNTER_COLOR,
+          size: style?.size ?? DEFAULT_COUNTER_SIZE,
+        };
+        return [...current, draft];
+      });
+      setSelectedCounterId(id);
+      return id;
+    },
+    [],
+  );
 
   const insertCounter = useCallback((data: Omit<CounterAnnotation, "id">) => {
     const draft: CounterAnnotation = { ...data, id: crypto.randomUUID() };
@@ -65,7 +73,9 @@ export function useCounters() {
   }, []);
 
   const updateCounter = useCallback((id: string, patch: CounterPatch) => {
-    setCounters((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+    setCounters((current) =>
+      current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+    );
   }, []);
 
   const removeCounter = useCallback((id: string) => {
