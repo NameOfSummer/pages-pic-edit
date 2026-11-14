@@ -2,7 +2,7 @@
 
 このファイルは、このリポジトリで作業する Claude Code (claude.ai/code) 向けのガイドです。
 
-pic-edit はブラウザだけで動く画像注釈アプリ（Shottr 風）です。透明な市松模様のキャンバスに画像を置き、矢印・矩形・テキスト・番号カウンター・モザイク・蛍光ペンで注釈を付けて、透過 PNG として書き出します。構成は Vite + React 19 + TypeScript + Tailwind v4 + shadcn/ui (Radix)。GitHub Pages にデプロイしています（`vite.config.ts` の `base: "/pic-edit/"`）。機能とコーディング規約の正は README.md（日本語）です。
+pic-edit はブラウザだけで動く画像注釈アプリ（Shottr 風）です。透明な市松模様のキャンバスに画像を置き、矢印・矩形・テキスト・番号カウンター・モザイク・蛍光ペンで注釈を付けて、透過 PNG として書き出します。構成は Vite + React 19 + TypeScript + Tailwind v4 + shadcn/ui (Radix)。GitHub Pages にデプロイしています（`vite.config.ts` の `base: "/pages-pic-edit/"`）。機能とコーディング規約の正は README.md（日本語）です。
 
 ## コマンド
 
