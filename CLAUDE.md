@@ -11,10 +11,11 @@ npm install
 npm run dev
 npm run lint              # ESLint（必須の JSDoc ルールを含む）
 npm run typecheck         # tsc --noEmit
+npm test                  # Vitest（vitest run）
 npm run build             # typecheck + vite build（CI では lint と npm audit の後にこれを実行）
 ```
 
-テストスイートはありません。変更は `npm run lint` と `npm run build` で確認します。
+テストは Vitest + Testing Library + jsdom です（`src/**/*.test.{ts,tsx}`、`npm test` / `npm run test:watch`）。React に依存しない純粋なロジックは `src/lib/` に置いてユニットテストします。変更は `npm run lint`・`npm run typecheck`・`npm test`・`npm run build` で確認します。
 
 ## アーキテクチャ
 
