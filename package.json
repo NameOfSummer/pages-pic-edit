@@ -11,8 +11,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "rebuild:esbuild": "npm rebuild esbuild --ignore-scripts=false"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@fontsource/noto-sans-jp": "^5.3.1",
@@ -46,7 +45,6 @@
     "vite": "^8.3.5"
   },
   "allowScripts": {
-    "esbuild": true,
     "fsevents": false
   },
   "overrides": {

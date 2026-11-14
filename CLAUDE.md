@@ -8,7 +8,6 @@ pic-edit はブラウザだけで動く画像注釈アプリ（Shottr 風）で�
 
 ```bash
 npm install
-npm run rebuild:esbuild   # install 後に必須: .npmrc が ignore-scripts=true のため、これを実行しないと esbuild のバイナリがセットアップされない
 npm run dev
 npm run lint              # ESLint（必須の JSDoc ルールを含む）
 npm run typecheck         # tsc --noEmit
