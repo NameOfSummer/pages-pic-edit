@@ -2,6 +2,7 @@
 
 > dentsu（https://www.dentsu.co.jp/）のデザイン仕様書。
 > 実サイトの computed style に基づく。CSS Custom Properties は未使用。
+> プレビュー：https://kzhrknt.github.io/awesome-design-md-jp/design-md/dentsu/preview.html
 
 ---
 
