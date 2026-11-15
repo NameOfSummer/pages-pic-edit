@@ -24,7 +24,7 @@ concurrency:
 
 env:
   # 要約コメントを見分けるための目印（他のコメントを上書きしないため）
-  COMMENT_MARKER: '<!-- dependabot-ja-summary -->'
+  COMMENT_MARKER: "<!-- dependabot-ja-summary -->"
 
 jobs:
   summarize:
